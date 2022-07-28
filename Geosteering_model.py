@@ -1,13 +1,12 @@
 from geosteering_tools.python_scenario_xml_reader import *
 from geosteering_tools.tools import *
 import pandas as pd
-import plotly.express as px
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
+# from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import dtaidistance
-from shapely import geometry
+from shapely.geometry.multipoint import MultiPoint
 from shapely.geometry import LineString
 from scipy import stats
 import lasio
@@ -192,7 +191,7 @@ class GeosteeringModel:
         start_offset_point = self.top_offset_MD
 
         # если пересечений траектории скважины с кровлей пласта несколько, берем только первое
-        if isinstance(self.intersection, geometry.multipoint.MultiPoint):
+        if isinstance(self.intersection, MultiPoint):
             self.intersection = self.intersection[0]
 
         md_start = self.md_start
@@ -242,43 +241,44 @@ class GeosteeringModel:
         self.bot_y, self.bot_x = res['y_inner'], res['x_inner']
 
     def surfaces_visualization(self, d_f=5, n=30000):
-        g_offset = self.gamma_offset.copy()
-        scaler = MinMaxScaler(feature_range=(0, 50))
-        g_offset_value = g_offset.value.to_numpy()
-        g_offset.value = scaler.fit_transform(g_offset_value.reshape(g_offset_value.shape[0], 1))
-        g_offset = g_offset.query("MD >= @self.top_offset_MD-@d_f  & MD <= @self.bot_offset_MD+@d_f ")
-
-        fig = px.line(x=self.trajectory.X[n:], y=self.trajectory.Y[n:])
-
-        fig.add_scatter(x=self.markers_top.X, y=self.markers_top.Y, marker=dict(color='green'))
-        fig.add_scatter(x=self.markers_bot.X, y=self.markers_bot.Y, marker=dict(color='green'))
-
-        fig.add_scatter(x=self.top_x,
-                        y=self.top_y,
-                        marker=dict(color='red'))
-
-        fig.add_scatter(x=self.bot_x,
-                        y=self.bot_y,
-                        marker=dict(color='red'))
-
-        fig.add_scatter(x=self.center_traj_x_without_smoothing,
-                        y=self.center_traj_y_without_smoothing,
-                        marker=dict(color='black'))
-
-        for point, d in zip(self.center_traj_x_without_smoothing, self.center_traj_y_without_smoothing):
-            x_val = point + g_offset.value.to_numpy() - g_offset.value.mean()
-            y_val = []
-            a = d
-            for diff in g_offset.MD.diff().fillna(0).to_numpy():
-                a += diff
-                y_val.append(a - d_f)
-
-            fig.add_scatter(x=x_val,
-                            y=y_val,
-                            marker=dict(color='orange'))
-
-        fig.update_yaxes(autorange="reversed")
-        fig.show()
+        pass
+        # g_offset = self.gamma_offset.copy()
+        # scaler = MinMaxScaler(feature_range=(0, 50))
+        # g_offset_value = g_offset.value.to_numpy()
+        # g_offset.value = scaler.fit_transform(g_offset_value.reshape(g_offset_value.shape[0], 1))
+        # g_offset = g_offset.query("MD >= @self.top_offset_MD-@d_f  & MD <= @self.bot_offset_MD+@d_f ")
+        #
+        # fig = px.line(x=self.trajectory.X[n:], y=self.trajectory.Y[n:])
+        #
+        # fig.add_scatter(x=self.markers_top.X, y=self.markers_top.Y, marker=dict(color='green'))
+        # fig.add_scatter(x=self.markers_bot.X, y=self.markers_bot.Y, marker=dict(color='green'))
+        #
+        # fig.add_scatter(x=self.top_x,
+        #                 y=self.top_y,
+        #                 marker=dict(color='red'))
+        #
+        # fig.add_scatter(x=self.bot_x,
+        #                 y=self.bot_y,
+        #                 marker=dict(color='red'))
+        #
+        # fig.add_scatter(x=self.center_traj_x_without_smoothing,
+        #                 y=self.center_traj_y_without_smoothing,
+        #                 marker=dict(color='black'))
+        #
+        # for point, d in zip(self.center_traj_x_without_smoothing, self.center_traj_y_without_smoothing):
+        #     x_val = point + g_offset.value.to_numpy() - g_offset.value.mean()
+        #     y_val = []
+        #     a = d
+        #     for diff in g_offset.MD.diff().fillna(0).to_numpy():
+        #         a += diff
+        #         y_val.append(a - d_f)
+        #
+        #     fig.add_scatter(x=x_val,
+        #                     y=y_val,
+        #                     marker=dict(color='orange'))
+        #
+        # fig.update_yaxes(autorange="reversed")
+        # fig.show()
 
     def curve_matching_visualization(self):
         plt.figure(figsize=(25, 7))

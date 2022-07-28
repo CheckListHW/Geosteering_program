@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.fft import *
-from skfda import FDataGrid
-from skfda.misc import cosine_similarity
-from skfda.misc.metrics import LpDistance
+import skfda
 
 
 def plot_curves(curve1, curve2):
@@ -25,17 +23,17 @@ def get_alpha(log):
 
 
 def lp_distance(curve1, curve2):
-    lp_dist = LpDistance(p=2)
-    fd1 = FDataGrid(curve1)
-    fd2 = FDataGrid(curve2)
+    lp_dist = skfda.misc.metrics.LpDistance(p=2)
+    fd1 = skfda.FDataGrid(curve1)
+    fd2 = skfda.FDataGrid(curve2)
     distance = lp_dist(fd1, fd2)
     return distance[0]
 
 
 def cos_sim(curve1, curve2):
-    fd1 = FDataGrid(curve1)
-    fd2 = FDataGrid(curve2)
-    score = cosine_similarity(fd1, fd2)
+    fd1 = skfda.FDataGrid(curve1)
+    fd2 = skfda.FDataGrid(curve2)
+    score = skfda.misc.cosine_similarity(fd1, fd2)
     return score[0]
 
 

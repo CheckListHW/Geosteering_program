@@ -1,12 +1,19 @@
 from Geosteering_model import GeosteeringModel
+from geosteering_tools.arg_parser import arg_parser
+
 
 if __name__ == '__main__':
-    print('start')
-    xml_path = 'input/Offset_1_BAJ.xml'
-    GR_path = 'input/GR_Well_6.las'
+    my_namespace, errors_messages = arg_parser()
+    if errors_messages:
+        [print(er) for er in errors_messages]
+    else:
+        print(f'start \nParams: {my_namespace.__dict__}')
+        model = GeosteeringModel(xml_path=my_namespace.scenario_path,
+                                 GR_path=my_namespace.gr_path)
 
-    model = GeosteeringModel(xml_path=xml_path, GR_path=GR_path)
-
-    model.init_algorithm_params(5, 30, 1, 'lp_distance')
-    model.start_geosteering(plot_matching=True)
-    print('finish')
+        model.init_algorithm_params(my_namespace.segments_count,
+                                    my_namespace.delta_deg,
+                                    my_namespace.st,
+                                    my_namespace.metric)
+        model.start_geosteering(plot_matching=True)
+        print('finish')
