@@ -9,49 +9,49 @@ def arg_parser() -> (argparse.Namespace, [str]):
         '--scenario_path',
         type=str,
         default='input/input.xml',
-        help='path to scenario (default: "input/input.xml")'
+        help='Путь до сценария(scenario)  в формате юxml (default: "input/input.xml")'
     )
 
     parser.add_argument(
         '--gr_path',
         type=str,
         default='input/input.las',
-        help='path to gr_gis (default: "input/input.las")'
+        help='Путь до файла с каратажом опорных скважин в формате .las  (default: "input/input.las")'
     )
 
     parser.add_argument(
         '--segments_count',
         type=int,
         default=5,
-        help='count of segments (default: 5)'
+        help='Количество отрезков на которую разделится траектория скважины (default: 5)'
     )
 
     parser.add_argument(
         '--delta_deg',
         type=int,
         default=30,
-        help=' from 0 to 90 (default: 30)'
+        help='Максимально допустимый угол отклонения от горизонтали в интервале (0;90) (default: 30)'
     )
 
     parser.add_argument(
         '--st',
         type=int,
         default=1,
-        help=' (default: 1)'
+        help='Частота генерации поверхности (в метрах).  (default: 1)'
     )
 
     parser.add_argument(
         '--metric',
         type=str,
         default='lp_distance',
-        help=f'{", ".join(metrics)} (default: lp_distance)'
+        help=f'Метод сравнения схожести кривых. Доступны: {", ".join(metrics)} (default: lp_distance)'
     )
 
     parser.add_argument(
         '--result_path',
         type=str,
         default='output.xml',
-        help='save path result file (default: output/output.xml)'
+        help='Путь сохранения файла (default: output/output.xml)'
     )
 
     current_namespace = parser.parse_args()

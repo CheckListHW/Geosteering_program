@@ -1,4 +1,3 @@
-from Geosteering_model import GeosteeringModel
 from geosteering_tools.arg_parser import arg_parser
 
 
@@ -8,6 +7,8 @@ if __name__ == '__main__':
         [print(er) for er in errors_messages]
     else:
         print(f'start \nParams: {my_namespace.__dict__}')
+
+        from Geosteering_model import GeosteeringModel
         model = GeosteeringModel(xml_path=my_namespace.scenario_path,
                                  GR_path=my_namespace.gr_path)
 

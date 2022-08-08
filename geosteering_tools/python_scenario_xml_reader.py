@@ -3,6 +3,7 @@ import xml.etree.ElementTree
 import xml.etree.ElementTree as ET
 from typing import List, Optional, Union
 
+
 class Point:
     def __init__(self, x: float, y: float):
         self.X = x
@@ -49,6 +50,13 @@ class Trajectory:
         self.Points: List[TrajectoryPoint] = []
 
 
+class SectionDip:
+    def __init__(self, md: float, dip: float, x: float, y: float):
+        self.Md: float = md
+        self.Dip: float = dip
+        self.Location = Point(x, y)
+
+
 def is_float(value: str) -> bool:
     try:
         float(value)
@@ -78,6 +86,9 @@ class Scenario:
         self.Property: List[Property] = []
         self.BeginMd: Optional[float] = None
         self.EndMd: Optional[float] = None
+        self.Trajectory: Trajectory = Trajectory()
+        self.Dips: List[SectionDip] = []
+        self.Markers: any = None
 
     def load(self, path: str):
         file = open(path, "r", encoding="utf-8")
@@ -85,11 +96,12 @@ class Scenario:
 
         self.BeginMd = find_in_element(scenario_xml, 'BeginMd', True)
         self.EndMd = find_in_element(scenario_xml, 'EndMd', True)
+        self.Markers = find_in_element(scenario_xml, 'Markers', True)
 
-        for p_xml in list(scenario_xml.find('Trajectory').find('Points')):
-            self.Trajectory.Points.append(TrajectoryPoint(find_in_element(p_xml, 'Md', True),
-                                                          find_in_element(p_xml.find('SectionPoint'), 'X', True),
-                                                          find_in_element(p_xml.find('SectionPoint'), 'Y', True)))
+        for point_xml in list(scenario_xml.find('Trajectory').find('Points')):
+            self.Trajectory.Points.append(TrajectoryPoint(find_in_element(point_xml, 'Md', True),
+                                                          find_in_element(point_xml.find('SectionPoint'), 'X', True),
+                                                          find_in_element(point_xml.find('SectionPoint'), 'Y', True)))
 
         for surface_element in list(scenario_xml.find('Section').find('Surfaces')):
             surface = Surface(find_in_element(surface_element, 'Name'))
@@ -110,22 +122,29 @@ class Scenario:
                 prop.Offset.Points.append(CurvePoint(find_in_element(point_element, 'Position', True),
                                                      find_in_element(point_element, 'Value', True)))
 
+        for section_dip_xml in list(scenario_xml.find('Dips')):
+            self.Dips.append(SectionDip(find_in_element(section_dip_xml, 'Md', True),
+                                        find_in_element(section_dip_xml, 'Dip', True),
+                                        find_in_element(section_dip_xml.find('Location'), 'X', True),
+                                        find_in_element(section_dip_xml.find('Location'), 'Y', True)))
+
     def save_json(self, path: str):
         with open(path, mode='w+') as json_file:
-            json.dump(self.get_data_as_dict(), json_file, ensure_ascii=False)
+            json.dump(self.__get_data_as_dict(), json_file, ensure_ascii=False)
             json_file.close()
 
     def save_xml(self, path: str):
         xml_file = open(path, "wb")
-        et = ET.ElementTree(self.get_data_as_xml())
+        et = ET.ElementTree(self.__get_data_as_xml())
         et.write(xml_file, encoding='utf-8', xml_declaration=True)
 
-    def get_data_as_xml(self) -> xml.etree.ElementTree.Element:
+    def __get_data_as_xml(self) -> xml.etree.ElementTree.Element:
         scenario_xml = ET.Element('Scenario', attrib={'xmlns:xsd': "http://www.w3.org/2001/XMLSchema",
                                                       'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance'})
 
         set_value_sub_element(scenario_xml, 'BeginMd', str(self.BeginMd), True)
         set_value_sub_element(scenario_xml, 'EndMd', str(self.EndMd), True)
+        set_value_sub_element(scenario_xml, 'Markers', str(self.Markers), True)
 
         trajectory_xml = ET.SubElement(scenario_xml, 'Trajectory')
         points_xml = ET.SubElement(trajectory_xml, 'Points')
@@ -174,9 +193,20 @@ class Scenario:
                                       True)
                 set_value_sub_element(curve_point_points_real_property_xml, 'Value', str(surface_point.Value), True)
 
+        dips_xml = ET.SubElement(scenario_xml, 'Dips')
+        for section_dip in self.Dips:
+            section_dip_xml = ET.SubElement(dips_xml, 'SectionDip')
+
+            set_value_sub_element(section_dip_xml, 'Md', str(section_dip.Md), True)
+            set_value_sub_element(section_dip_xml, 'Dip', str(section_dip.Dip), True)
+            location_xml = ET.SubElement(section_dip_xml, 'Location')
+
+            set_value_sub_element(location_xml, 'X', str(section_dip.Location.X), True)
+            set_value_sub_element(location_xml, 'Y', str(section_dip.Location.Y), True)
+
         return scenario_xml
 
-    def get_data_as_dict(self) -> dict:
+    def __get_data_as_dict(self) -> dict:
         points: List[dict] = []
         for trajectoryPoint in self.Trajectory.Points:
             points.append({'Md': trajectoryPoint.Md, 'SectionPoint': {'X': trajectoryPoint.SectionPoint.X,
