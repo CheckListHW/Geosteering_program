@@ -1,1 +1,6 @@
 /output/
+/.spec
+/output.zip
+/files/
+/build/
+/dist/
