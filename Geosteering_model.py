@@ -14,13 +14,8 @@ import lasio
 from scipy.interpolate import interp1d
 
 
-class Geostering_Model():    
+class GeosteeringModel:
     def __init__(self, xml_path, GR_path):
-        """Считываем все данные которые потребуются для геонавигации
-        Args:
-            xml_path (str): путь к xml файлу с данными GO
-            GR_path (str): путь к las файлу с опорным каротажем
-        """        
         # считываем xml файл со сценарием
         self.Cor = Scenario()
         self.Cor.load(xml_path)
@@ -78,19 +73,23 @@ class Geostering_Model():
         gamma_offset['value'] = val
         gamma_offset = gamma_offset.dropna()
 
-        top_offset_MD_ind = np.where(gamma_offset.MD.to_numpy() == 10000)[0]  # кровля пласта всегда лежит под MD == 10000
-        bot_offset_MD_ind = np.where(gamma_offset.MD.to_numpy() == 20000)[0]  # подошва пласта всегда лежит под MD == 20000
+        top_offset_MD_ind = np.where(gamma_offset.MD.to_numpy() == 10000)[
+            0]  # кровля пласта всегда лежит под MD == 10000
+        bot_offset_MD_ind = np.where(gamma_offset.MD.to_numpy() == 20000)[
+            0]  # подошва пласта всегда лежит под MD == 20000
 
         self.gamma_offset = lasio.read(GR_path).df().reset_index().rename(columns={'DEPT': 'MD', 'GR': 'value'})[
             ['MD', 'value']]
 
-        self.top_offset_MD = self.gamma_offset.MD.to_numpy()[top_offset_MD_ind][0]  # отсечка кровли пласта на опорном каротаже
-        self.bot_offset_MD = self.gamma_offset.MD.to_numpy()[bot_offset_MD_ind][0]  # отсечка подошвы пласта на опорном каротаже
+        self.top_offset_MD = self.gamma_offset.MD.to_numpy()[top_offset_MD_ind][
+            0]  # отсечка кровли пласта на опорном каротаже
+        self.bot_offset_MD = self.gamma_offset.MD.to_numpy()[bot_offset_MD_ind][
+            0]  # отсечка подошвы пласта на опорном каротаже
         self.th = self.bot_offset_MD - self.top_offset_MD  # обсчитываем мощность пласта
 
-        self.gamma_offset = self.gamma_offset[(np.abs(stats.zscore(self.gamma_offset)) < 3).all(axis=1)]  # удаляем выбросы
+        self.gamma_offset = self.gamma_offset[
+            (np.abs(stats.zscore(self.gamma_offset)) < 3).all(axis=1)]  # удаляем выбросы
         self.gamma_offset.value = get_alpha(self.gamma_offset.value.to_numpy())
-
 
         # находим точку инициализации алгоритма путем нахождения точки пересечения траектории скважины с заданной кровлей пласта
         tr_x = trajectory.X.to_numpy()
@@ -100,37 +99,21 @@ class Geostering_Model():
         first_line = LineString(np.column_stack((tr_x, tr_y)))
         second_line = LineString(np.column_stack((markers_top_x, markers_top_y)))
         self.intersection = first_line.intersection(second_line)
-        # если пересечений траектории скважины с кровлей пласта несколько, берем только первое
-        if isinstance(self.intersection, geometry.multipoint.MultiPoint):
-            self.intersection = self.intersection[0]
-
-        # считываем интерпретированные геологом данные имиджа
-        dips = [[d.Md, d.Dip, d.Location.X, d.Location.Y ] for d in self.Cor.Dips]
-        self.dips = pd.DataFrame(dips)
-        self.dips.columns = ['MD', 'Dip', 'X', 'Y']
 
         # задаём параметры по умолчанию
-        self.init_algoritm_params(7, 35, 0.5, 'dtw')
+        self.init_algorithm_params(7, 35, 0.1, 'dtw')
 
-
-    def init_algoritm_params(self, num_of_segments, delta_deg, st, metric):
-        """Метод для установки гтперпараметров алгоритма
-
-        Args:
-            num_of_segments (int): колличество отрезков на которое следует разбить всю траекторию
-            delta_deg (float): градус на который может отклоняться плоскость от горизонтали (условно при горизонтальном бурении)
-            st (float): шаг для генерации синтетических кривых
-            metric (str): метрика для сравнения кривых
-        """        
+    def init_algorithm_params(self, num_of_segments, delta_deg, st, metric):
         self.md_start = get_val(self.intersection.x, self.trajectory, 'MD', target_column='X')
         md = self.trajectory.query("MD >= @self.md_start").MD.to_numpy()
 
-        self.step = (md.max() - md.min())/num_of_segments  # длина отрезка на котором предположительно пласт распространяется линейно
+        self.step = (
+                                md.max() - md.min()) / num_of_segments  # длина отрезка на котором предположительно пласт распространяется линейно
 
         self.delta_deg = delta_deg  # максимальный угол между начальной и конечной точкой отрезка
-                                    # (условно, при горизонтальном расположении траектории скважины)
-                                    # по сути параметр для пересчета глубины на которую может сместиться проекция
-                                    # скважины на опорном каротаже
+        # (условно, при горизонтальном расположении траектории скважины)
+        # по сути параметр для пересчета глубины на которую может сместиться проекция
+        # скважины на опорном каротаже
 
         self.st = st  # шаг в метрах с которым генерируется синтетика, по сути контроль точности предсказания/скорости алгоритма
 
@@ -144,7 +127,7 @@ class Geostering_Model():
             self.dist_calculation = lambda curve1, curve2: r2_score(curve1, curve2)
             self.get_best_sintetic_curve_ind = lambda d_l: np.argmax(d_l)
         elif metric == 'dtw':
-            self.dist_calculation = lambda curve1, curve2: dtaidistance.dtw.distance(curve1, curve2, window=10)
+            self.dist_calculation = lambda curve1, curve2: dtaidistance.dtw.distance(curve1, curve2)
             self.get_best_sintetic_curve_ind = lambda d_l: np.argmin(d_l)
         elif metric == 'cos_sim':
             self.dist_calculation = lambda curve1, curve2: cos_sim(curve1, curve2)
@@ -154,7 +137,7 @@ class Geostering_Model():
             self.get_best_sintetic_curve_ind = lambda d_l: np.argmin(d_l)
 
         # рассчитываем количество отрезков по которым будем матчить кривые
-        self.num_of_iterations = num_of_segments   #self.calculate_num_of_iterations()
+        self.num_of_iterations = num_of_segments  # self.calculate_num_of_iterations()
 
 
     # def calculate_num_of_iterations(self):
@@ -169,25 +152,13 @@ class Geostering_Model():
 
 
     def sint_curve_generator(self, start_offset_point, gamma_real_cut, delta):
-        """Метод для генерации синтетической кривой в соответствии с длиной реальной кривой
-
-        Args:
-            start_offset_point (float): начальная точка из которой будут генерироваться кривые
-            gamma_real_cut (Pandas.DataFrame): датафрейм содержащий реальную кривую
-            delta (float): максимальное отклонение проекции скважины на опорный каротаж от начальной точки в метрах 
-
-        Returns:
-            List: список с синтетическими каротажами 
-            List: список конечных точек проекии для синтетических каротажей
-            float: Y координата конца отрезка
-
-        """        
         real_tr = [get_val(jtem, self.trajectory, 'Y') for jtem in gamma_real_cut.MD]
-        curvature = real_tr - np.linspace(real_tr[0], real_tr[-1], len(real_tr)) # рассчитываем кривизну скважины на заданном участке
+        curvature = real_tr - np.linspace(real_tr[0], real_tr[-1],
+                                          len(real_tr))  # рассчитываем кривизну скважины на заданном участке
 
         end_points = np.arange(start_offset_point - delta, start_offset_point + delta + self.st, self.st)
         sintetic_curves = [np.linspace(start_offset_point, end_point, len(gamma_real_cut.MD)) + curvature for end_point
-                           in end_points]   # рассчитываем проекции получившейся траектории на опорный каротаж
+                           in end_points]  # рассчитываем проекции получившейся траектории на опорный каротаж
 
         # снимаем значения с опорного каротажа и формируем итоговые кривые
         for i, item in enumerate(sintetic_curves):
@@ -195,33 +166,20 @@ class Geostering_Model():
                 try:
                     gamma_val = get_val(jtem, self.gamma_offset, 'value')
                 except IndexError:
-                    gamma_val = self.gamma_offset.iloc[(self.gamma_offset['MD'] - jtem).abs().argsort()]['value'].values[0]
+                    gamma_val = \
+                    self.gamma_offset.iloc[(self.gamma_offset['MD'] - jtem).abs().argsort()]['value'].values[0]
                 sintetic_curves[i][j] = gamma_val
 
         return sintetic_curves, end_points, real_tr[-1]
 
-
-    def geosteering_iteration(self,start_offset_point, md_start, plot_matching=False):
-        """Итерация процесса геонавигации, на которой матчится один отрезок
-
-        Args:
-            start_offset_point (float): проекция стартовой точки на опорном каротаже
-            md_start (float): отметка глубины по скважине для начала геонавигации
-            plot_matching (bool, optional): Визуализация кривых которые были выбраны по заданной метрике как наиболее похожие. Defaults to False.
-
-        Returns:
-            Tuple: кортеж с проекциями на опроный каротаж, 1 значение - начало отрезка, 2 - конец  
-            Tuple: кортеж с отметками глубин по скважине, 1 значение - начало отрезка, 2 - конец 
-            List: синтетическая кривая по метрике наилучшим образом сходящаяся с реальной
-            float: Х координата конца отрезка
-            float: Y координата конца отрезка
-        """        
+    def geosteering_iteration(self, start_offset_point, md_start, plot_matching=False):
         md_next = md_start + self.step
         gamma_real_cut = self.gamma_real.query("MD <= @md_next & MD >= @md_start")
         tr_x = get_val(gamma_real_cut.MD.to_numpy()[-1], self.trajectory, 'X')
 
         # пересчет из угла в метры (даны угол между катетом и гипотенузой, рассчитывается катет напротив угла)
-        delta = (tr_x - get_val(gamma_real_cut.MD.to_numpy()[0], self.trajectory, 'X')) * np.tan(np.radians(self.delta_deg))
+        delta = (tr_x - get_val(gamma_real_cut.MD.to_numpy()[0], self.trajectory, 'X')) * np.tan(
+            np.radians(self.delta_deg))
 
         # генерируем синтетические кривые
         sintetic_curves, end_points, tr_y = self.sint_curve_generator(start_offset_point, gamma_real_cut, delta)
@@ -244,12 +202,11 @@ class Geostering_Model():
 
 
     def start_geosteering(self, plot_matching=False):
-        """Метод осуществляющий геонавигации. Итеративно бежит и выбирает положение отрезка в пространстве жадным образом, то есть лучшее решение на каждом шаге.
-
-        Args:
-            plot_matching (bool, optional): Визуализация кривых которые были выбраны по заданной метрике как наиболее похожие. Defaults to False.
-        """        
         start_offset_point = self.top_offset_MD
+
+        # если пересечений траектории скважины с кровлей пласта несколько, берем только первое
+        if isinstance(self.intersection, geometry.multipoint.MultiPoint):
+            self.intersection = self.intersection[0]
 
         md_start = self.md_start
 
@@ -283,28 +240,21 @@ class Geostering_Model():
             start_offset_point = offset_md_points[1]
 
         self.center_traj_x_without_smoothing = np.array(top_traj_x)
-        self.center_traj_y_without_smoothing = np.array(top_traj_y + self.th*0.5)
+        self.center_traj_y_without_smoothing = np.array(top_traj_y + self.th * 0.5)
 
         top_traj_x = np.array(top_traj_x)
-        top_traj_y = np.array(top_traj_y + self.th*0.5)
+        top_traj_y = np.array(top_traj_y + self.th * 0.5)
 
         cubic_interpolation_model = interp1d(top_traj_x, top_traj_y, kind="cubic")
 
         top_traj_x = np.linspace(top_traj_x.min(), top_traj_x.max(), len(top_traj_x) * 5)
         top_traj_y = cubic_interpolation_model(top_traj_x)
 
-        res = parallel_curves(top_traj_x, top_traj_y, d=self.th*0.5, flag1=False)
+        res = parallel_curves(top_traj_x, top_traj_y, d=self.th * 0.5, flag1=False)
         self.top_y, self.top_x = res['y_outer'], res['x_outer']
         self.bot_y, self.bot_x = res['y_inner'], res['x_inner']
 
-
     def surfaces_visualization(self, d_f=5, n=30000):
-        """Визуализация итоговых поверхностей
-
-        Args:
-            d_f (int, optional): Сколько метров выше и ниже кроавли и подошвы пласта отобразить на опорном каротаже. Defaults to 5.
-            n (int, optional): Сколько точек от устья скважины не отображать. Defaults to 30000.
-        """        
         g_offset = self.gamma_offset.copy()
         scaler = MinMaxScaler(feature_range=(0, 50))
         g_offset_value = g_offset.value.to_numpy()
@@ -343,14 +293,10 @@ class Geostering_Model():
         fig.update_yaxes(autorange="reversed")
         fig.show()
 
-
     def curve_matching_visualization(self):
-        """Визуализация для сравнения реального и итогового синтетического каротажа
-        """        
         plt.figure(figsize=(25, 7))
         plot_curves(self.sintetic_curve,
                     self.gamma_real[self.gamma_real.MD >= self.md_start].value.to_numpy()[:len(self.sintetic_curve)])
-
 
     def save_results_to_xml(self):
         new_top_markers = []
@@ -383,7 +329,3 @@ class Geostering_Model():
         self.Cor.Section.Surfaces[1].Points = new_bot_markers
 
         self.Cor.save_xml('output/result.xml')
-
-    
-
-
