@@ -79,6 +79,13 @@ def find_in_element(parent: xml.etree.ElementTree.Element, name: str, is_float_v
     return float(value) if is_float(value) else None
 
 
+class TrajectoryMarker:
+    def __init__(self, md: float, location_x: float, location_y: float, surface_index: int):
+        self.Md: float = md
+        self.Location = Point(location_x, location_y)
+        self.SurfaceIndex: int = surface_index
+
+
 class Scenario:
     def __init__(self):
         self.Trajectory: Trajectory = Trajectory()
@@ -88,7 +95,7 @@ class Scenario:
         self.EndMd: Optional[float] = None
         self.Trajectory: Trajectory = Trajectory()
         self.Dips: List[SectionDip] = []
-        self.Markers: any = None
+        self.Markers: List[TrajectoryMarker] = []
 
     def load(self, path: str):
         file = open(path, "r", encoding="utf-8")
@@ -96,7 +103,6 @@ class Scenario:
 
         self.BeginMd = find_in_element(scenario_xml, 'BeginMd', True)
         self.EndMd = find_in_element(scenario_xml, 'EndMd', True)
-        self.Markers = find_in_element(scenario_xml, 'Markers', True)
 
         for point_xml in list(scenario_xml.find('Trajectory').find('Points')):
             self.Trajectory.Points.append(TrajectoryPoint(find_in_element(point_xml, 'Md', True),
@@ -127,6 +133,12 @@ class Scenario:
                                         find_in_element(section_dip_xml, 'Dip', True),
                                         find_in_element(section_dip_xml.find('Location'), 'X', True),
                                         find_in_element(section_dip_xml.find('Location'), 'Y', True)))
+
+        for marker_xml in list(scenario_xml.find('Markers')):
+            self.Markers.append(TrajectoryMarker(find_in_element(marker_xml, 'Md', True),
+                                                 find_in_element(marker_xml.find('Location'), 'X', True),
+                                                 find_in_element(marker_xml.find('Location'), 'Y', True),
+                                                 int(find_in_element(marker_xml, 'SurfaceIndex', True))))
 
     def save_json(self, path: str):
         with open(path, mode='w+') as json_file:
@@ -204,6 +216,18 @@ class Scenario:
             set_value_sub_element(location_xml, 'X', str(section_dip.Location.X), True)
             set_value_sub_element(location_xml, 'Y', str(section_dip.Location.Y), True)
 
+        markers_xml = ET.SubElement(scenario_xml, 'Markers')
+        for marker in self.Markers:
+            trajectory_marker_xml = ET.SubElement(markers_xml, 'TrajectoryMarker')
+
+            set_value_sub_element(trajectory_marker_xml, 'Md', str(marker.Md), True)
+            set_value_sub_element(trajectory_marker_xml, 'SurfaceIndex', str(marker.SurfaceIndex), True)
+
+            location_xml = ET.SubElement(trajectory_marker_xml, 'Location')
+
+            set_value_sub_element(location_xml, 'X', str(marker.Location.X), True)
+            set_value_sub_element(location_xml, 'Y', str(marker.Location.Y), True)
+
         return scenario_xml
 
     def __get_data_as_dict(self) -> dict:
@@ -227,3 +251,10 @@ class Scenario:
                 'Property': properties,
                 'BeginMd': self.BeginMd,
                 'EndMd': self.EndMd}
+
+
+if __name__ == '__main__':
+    sc = Scenario()
+    sc.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/files/well2landing.xml')
+    sc.save_xml('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/files/sasat2.xml')
+    print('ok')
