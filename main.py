@@ -18,7 +18,7 @@ def start(params):
 if __name__ == '__main__':
     my_namespace, errors_messages = arg_parser()
     if errors_messages:
-        [print(er) for er in errors_messages]
+        print("\n".join(errors_messages))
     else:
         print(f'Start \nParams: {my_namespace.__dict__}')
         start(my_namespace)
