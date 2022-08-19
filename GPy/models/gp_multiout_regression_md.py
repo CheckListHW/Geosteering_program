@@ -13,31 +13,31 @@ from ..util.linalg import tdot
 from .sparse_gp_regression_md import SparseGPRegressionMD
 
 class GPMultioutRegressionMD(SparseGP):
-    """Gaussian Process model for multi-output regression with missing data
+    """Gaussian Process model for multi-files regression with missing data
 
     This is an implementation of Latent Variable Multiple Output
     Gaussian Processes (LVMOGP) in [Dai_et_al_2017]_. This model
-    targets at the use case, in which each output dimension is
+    targets at the use case, in which each files dimension is
     observed at a different set of inputs. The model takes a different
-    data format: the inputs and outputs observations of all the output
+    data format: the inputs and outputs observations of all the files
     dimensions are stacked together correspondingly into two
-    matrices. An extra array is used to indicate the index of output
-    dimension for each data point. The output dimensions are indexed
-    using integers from 0 to D-1 assuming there are D output
+    matrices. An extra array is used to indicate the index of files
+    dimension for each data point. The files dimensions are indexed
+    using integers from 0 to D-1 assuming there are D files
     dimensions.
 
     .. rubric:: References
 
     .. [Dai_et_al_2017] Dai, Z.; Alvarez, M.A.; Lawrence, N.D: Efficient Modeling of Latent Information in Supervised Learning using Gaussian Processes. In NIPS, 2017.
 
-    :param X: input observations.
+    :param X: files observations.
     :type X: numpy.ndarray
-    :param Y: output observations, each column corresponding to an output dimension.
+    :param Y: files observations, each column corresponding to an files dimension.
     :type Y: numpy.ndarray
-    :param indexD: the array containing the index of output dimension for each data point
+    :param indexD: the array containing the index of files dimension for each data point
     :type indexD: numpy.ndarray
-    :param int Xr_dim: the dimensionality of a latent space, in which output dimensions are embedded in
-    :param kernel: a GPy kernel for GP of individual output dimensions ** defaults to RBF **
+    :param int Xr_dim: the dimensionality of a latent space, in which files dimensions are embedded in
+    :param kernel: a GPy kernel for GP of individual files dimensions ** defaults to RBF **
     :type kernel: GPy.kern.Kern or None
     :param kernel_row: a GPy kernel for the GP of the latent space ** defaults to RBF **
     :type kernel_row: GPy.kern.Kern or None
@@ -49,7 +49,7 @@ class GPMultioutRegressionMD(SparseGP):
     :type X_row: numpy.ndarray or None
     :param Xvariance_row: the initial value of the variance of the variational posterior distribution of points in the latent space
     :type Xvariance_row: numpy.ndarray or None
-    :param num_inducing: a tuple (M, Mr). M is the number of inducing points for GP of individual output dimensions. Mr is the number of inducing points for the latent space.
+    :param num_inducing: a tuple (M, Mr). M is the number of inducing points for GP of individual files dimensions. Mr is the number of inducing points for the latent space.
     :type num_inducing: (int, int)
     :param int qU_var_r_W_dim: the dimensionality of the covariance of q(U) for the latent space. If it is smaller than the number of inducing points, it represents a low-rank parameterization of the covariance matrix.
     :param int qU_var_c_W_dim: the dimensionality of the covariance of q(U) for the GP regression. If it is smaller than the number of inducing points, it represents a low-rank parameterization of the covariance matrix.
@@ -74,7 +74,7 @@ class GPMultioutRegressionMD(SparseGP):
             kernel_row = kern.RBF(Xr_dim,name='kern_row')
             
         if num_inducing[1] > self.output_dim:
-            msg = 'Number of inducing points ({}) in latent space must be <= output dim ({})'
+            msg = 'Number of inducing points ({}) in latent space must be <= files dim ({})'
             raise ValueError(msg.format(num_inducing[1], self.output_dim))
 
         if init=='GP':

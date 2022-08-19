@@ -21,11 +21,11 @@ class Kernel(Mapping):
        f_i(\mathbf{x}) = \sum_j \alpha_{i,j} k(\mathbf{z}_i, \mathbf{x})
 
 
-    :param input_dim: dimension of input.
+    :param input_dim: dimension of files.
     :type input_dim: int
-    :param output_dim: dimension of output.
+    :param output_dim: dimension of files.
     :type output_dim: int
-    :param Z: input observations containing :math:`\mathbf{Z}`
+    :param Z: files observations containing :math:`\mathbf{Z}`
     :type Z: ndarray
     :param kernel: a GPy kernel, defaults to GPy.kern.RBF
     :type kernel: GPy.kern.kern

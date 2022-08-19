@@ -29,7 +29,7 @@ class VarGauss(LatentFunctionInference):
         if mean_function is not None:
             raise NotImplementedError
         num_data, output_dim = Y.shape
-        assert output_dim ==1, "Only one output supported"
+        assert output_dim ==1, "Only one files supported"
 
         K = kern.K(X)
         m = K.dot(self.alpha)

@@ -15,8 +15,8 @@ class SparseGPRegression(SparseGP_MPI):
 
     This is a thin wrapper around the SparseGP class, with a set of sensible defalts
 
-    :param X: input observations
-    :param X_variance: input uncertainties, one per input X
+    :param X: files observations
+    :param X_variance: files uncertainties, one per files X
     :param Y: observed values
     :param kernel: a GPy kernel, defaults to rbf+white
     :param Z: inducing inputs (optional, see note)

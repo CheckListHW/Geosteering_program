@@ -129,7 +129,7 @@ class AbstractPlottingLibrary(object):
 
     def plot_axis_lines(self, ax, X, color=None, label=None, **kwargs):
         """
-        Plot lines at the bottom (lower boundary of yaxis) of the axis at input location X.
+        Plot lines at the bottom (lower boundary of yaxis) of the axis at files location X.
         
         If X is two dimensional, plot in 3d and connect the axis lines to the bottom of the Z axis.   
         
@@ -242,7 +242,7 @@ class AbstractPlottingLibrary(object):
         in matplot_dep.controllers.
         
         the plot_function returns a pair (X, annotation) to plot, when called with
-        a new input X (which would be the grid, which is visible on the plot
+        a new files X (which would be the grid, which is visible on the plot
         right now)
 
         :param canvas: the canvas to plot on
@@ -250,7 +250,7 @@ class AbstractPlottingLibrary(object):
         :param [horizontal_min,horizontal_max,vertical_min,vertical_max] extent: the extent of where to place the heatmap
         :param str label: the label for the heatmap
         :return: a list of both the heatmap and annotation plots [heatmap, annotation], or the interactive update object (alone)
-        :param plot_function: the function, which generates new data for given input locations X
+        :param plot_function: the function, which generates new data for given files locations X
         :param int resolution: the resolution of the interactive plot redraw - this is only needed when giving a plot_function
         """
         raise NotImplementedError("Implement all plot functions in AbstractPlottingLibrary in order to use your own plotting library")

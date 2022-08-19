@@ -328,4 +328,4 @@ class GeosteeringModel:
         self.Cor.Section.Surfaces[0].Points = new_top_markers
         self.Cor.Section.Surfaces[1].Points = new_bot_markers
 
-        self.Cor.save_xml('output/result.xml')
+        self.Cor.save_xml('files/result.xml')

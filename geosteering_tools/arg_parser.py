@@ -8,50 +8,50 @@ def arg_parser() -> (argparse.Namespace, [str]):
     parser.add_argument(
         '--scenario_path',
         type=str,
-        default='input/input.xml',
-        help='Путь до сценария(scenario)  в формате юxml (default: "input/input.xml")'
+        default='files.xml',
+        help='Путь до сценария(scenario)  в формате юxml (default: "files.xml")'
     )
 
     parser.add_argument(
         '--gr_path',
         type=str,
-        default='input/input.las',
-        help='Путь до файла с каратажом опорных скважин в формате .las  (default: "input/input.las")'
+        default='files.las',
+        help='Путь до файла с каратажом опорных скважин в формате .las  (default: "files.las")'
     )
 
     parser.add_argument(
         '--segments_count',
         type=int,
-        default=5,
+        default=100,
         help='Количество отрезков на которую разделится траектория скважины (default: 5)'
     )
 
     parser.add_argument(
         '--delta_deg',
         type=int,
-        default=30,
+        default=10,
         help='Максимально допустимый угол отклонения от горизонтали в интервале (0;90) (default: 30)'
     )
 
     parser.add_argument(
         '--st',
-        type=int,
-        default=1,
+        type=float,
+        default=0.5,
         help='Частота генерации поверхности (в метрах).  (default: 1)'
     )
 
     parser.add_argument(
         '--metric',
         type=str,
-        default='lp_distance',
-        help=f'Метод сравнения схожести кривых. Доступны: {", ".join(metrics)} (default: lp_distance)'
+        default='r2',
+        help=f'Метод сравнения схожести кривых. Доступны: {", ".join(metrics)} (default: r2)'
     )
 
     parser.add_argument(
         '--result_path',
         type=str,
-        default='output.xml',
-        help='Путь сохранения файла (default: output/output.xml)'
+        default='files.xml',
+        help='Путь сохранения файла (default: files.xml)'
     )
 
     current_namespace = parser.parse_args()
@@ -69,7 +69,7 @@ def arg_parser() -> (argparse.Namespace, [str]):
     if current_namespace.segments_count < 1:
         error_messages.append('segments_count should be more than 0')
 
-    if current_namespace.st < 1:
+    if current_namespace.st <= 0:
         error_messages.append('st should be more than 0')
 
     if current_namespace.metric not in metrics:

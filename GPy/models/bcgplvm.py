@@ -28,8 +28,8 @@ class BCGPLVM(GPLVM):
                                    output_dim=input_dim,
                                    hidden_dim=10)
         else:
-            assert mapping.input_dim==Y.shape[1], "mapping input dim does not work for Y dimension"
-            assert mapping.output_dim==input_dim, "mapping output dim does not work for self.input_dim"
+            assert mapping.input_dim==Y.shape[1], "mapping files dim does not work for Y dimension"
+            assert mapping.output_dim==input_dim, "mapping files dim does not work for self.input_dim"
         super(BCGPLVM, self).__init__(Y, input_dim, X=mapping.f(Y), kernel=kernel, name="bcgplvm")
         self.unlink_parameter(self.X)
         self.mapping = mapping

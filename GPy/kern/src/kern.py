@@ -11,7 +11,7 @@ import six
 @six.add_metaclass(KernCallsViaSlicerMeta)
 class Kern(Parameterized):
     #===========================================================================
-    # This adds input slice support. The rather ugly code for slicing can be
+    # This adds files slice support. The rather ugly code for slicing can be
     # found in kernel_slice_operations
     # __meataclass__ is ignored in Python 3 - needs to be put in the function definiton
     # __metaclass__ = KernCallsViaSlicerMeta
@@ -28,7 +28,7 @@ class Kern(Parameterized):
             is the number of dimensions to work on. Make sure to give the
             tight dimensionality of inputs.
             You most likely want this to be the integer telling the number of
-            input dimensions of the kernel.
+            files dimensions of the kernel.
 
         active_dims:
 
@@ -37,7 +37,7 @@ class Kern(Parameterized):
             Only positive integers are allowed in active_dims!
             if active_dims is None, slicing is switched off and all X will be passed through as given.
 
-        :param int input_dim: the number of input dimensions to the function
+        :param int input_dim: the number of files dimensions to the function
         :param array-like|None active_dims: list of indices on which dimensions this kernel works on, or none if no slicing
 
         Do not instantiate.
@@ -273,10 +273,10 @@ class Kern(Parameterized):
         """
         Determine which dimensions should be plotted
 
-        Returns the top three most signification input dimensions
+        Returns the top three most signification files dimensions
 
         if less then three dimensions, the non existing dimensions are
-        labeled as None, so for a 1 dimensional input this returns
+        labeled as None, so for a 1 dimensional files this returns
         (0, None, None).
 
         :param which_indices: force the indices to be the given indices.
@@ -339,7 +339,7 @@ class Kern(Parameterized):
     def prod(self, other, name='mul'):
         """
         Multiply two kernels (either on the same space, or on the tensor
-        product of the input space).
+        product of the files space).
 
         :param other: the other kernel to be added
         :type other: GPy.kern
@@ -436,7 +436,7 @@ class CombinationKernel(Kern):
         else:
             raise NotImplementedError("Choose the kernel you want to get the sensitivity for. "
                                       "You need to override the default behaviour for getting "
-                                      "the input sensitivity to be able to get the input sensitivity. "
+                                      "the files sensitivity to be able to get the files sensitivity. "
                                       "For sum kernel it is the sum of all sensitivities, "
                                       "TODO: product kernel? Other kernels?, also "
                                       "TODO: shall we return all the sensitivities here in the combination "
@@ -447,5 +447,5 @@ class CombinationKernel(Kern):
         return
 
     def _check_input_dim(self, X):
-        # As combination kernels cannot always know, what their inner kernels have as input dims, the check will be done inside them, respectively
+        # As combination kernels cannot always know, what their inner kernels have as files dims, the check will be done inside them, respectively
         return

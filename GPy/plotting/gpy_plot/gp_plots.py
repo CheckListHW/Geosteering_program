@@ -54,7 +54,7 @@ def plot_mean(self, plot_limits=None, fixed_inputs=None,
 
     :param plot_limits: The limits of the plot. If 1D [xmin,xmax], if 2D [[xmin,ymin],[xmax,ymax]]. Defaluts to data limits
     :type plot_limits: np.array
-    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that input dimension i should be set to value v.
+    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that files dimension i should be set to value v.
     :type fixed_inputs: a list of tuples
     :param int resolution: The resolution of the prediction [defaults are 1D:200, 2D:50]
     :param bool plot_raw: plot the latent function (usually denoted f) only?
@@ -102,7 +102,7 @@ def _plot_mean(self, canvas, helper_data, helper_prediction,
     elif len(free_dims)==0:
         pass # Nothing to plot!
     else:
-        raise RuntimeError('Cannot plot mean in more then 2 input dimensions')
+        raise RuntimeError('Cannot plot mean in more then 2 files dimensions')
     return plots
 
 def plot_confidence(self, lower=2.5, upper=97.5, plot_limits=None, fixed_inputs=None,
@@ -125,13 +125,13 @@ def plot_confidence(self, lower=2.5, upper=97.5, plot_limits=None, fixed_inputs=
     :param float upper: the upper percentile to plot
     :param plot_limits: The limits of the plot. If 1D [xmin,xmax], if 2D [[xmin,ymin],[xmax,ymax]]. Defaluts to data limits
     :type plot_limits: np.array
-    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that input dimension i should be set to value v.
+    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that files dimension i should be set to value v.
     :type fixed_inputs: a list of tuples
     :param int resolution: The resolution of the prediction [default:200]
     :param bool plot_raw: plot the latent function (usually denoted f) only?
     :param bool apply_link: whether to apply the link function of the GP to the raw prediction.
-    :param array-like visible_dims: which columns of the input X (!) to plot (array-like or list of ints)
-    :param array-like which_data_ycols: which columns of the output y (!) to plot (array-like or list of ints)
+    :param array-like visible_dims: which columns of the files X (!) to plot (array-like or list of ints)
+    :param array-like which_data_ycols: which columns of the files y (!) to plot (array-like or list of ints)
     :param dict predict_kw: the keyword arguments for the prediction. If you want to plot a specific kernel give dict(kern=<specific kernel>) in here
     """
     canvas, kwargs = pl().new_canvas(**kwargs)
@@ -157,7 +157,7 @@ def _plot_confidence(self, canvas, helper_data, helper_prediction, label, **kwar
         else:
             pass #Nothing to plot!
     else:
-        raise RuntimeError('Can only plot confidence interval in one input dimension')
+        raise RuntimeError('Can only plot confidence interval in one files dimension')
 
 
 def plot_samples(self, plot_limits=None, fixed_inputs=None,
@@ -178,12 +178,12 @@ def plot_samples(self, plot_limits=None, fixed_inputs=None,
 
     :param plot_limits: The limits of the plot. If 1D [xmin,xmax], if 2D [[xmin,ymin],[xmax,ymax]]. Defaluts to data limits
     :type plot_limits: np.array
-    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that input dimension i should be set to value v.
+    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that files dimension i should be set to value v.
     :type fixed_inputs: a list of tuples
     :param int resolution: The resolution of the prediction [defaults are 1D:200, 2D:50]
     :param bool plot_raw: plot the latent function (usually denoted f) only? This is usually what you want!
     :param bool apply_link: whether to apply the link function of the GP to the raw prediction.
-    :param array-like visible_dims: which columns of the input X (!) to plot (array-like or list of ints)
+    :param array-like visible_dims: which columns of the files X (!) to plot (array-like or list of ints)
     :param array-like which_data_ycols: which columns of y to plot (array-like or list of ints)
     :param dict predict_kw: the keyword arguments for the prediction. If you want to plot a specific kernel give dict(kern=<specific kernel>) in here
     :param int levels: for 2D plotting, the number of contour levels to use is
@@ -216,7 +216,7 @@ def _plot_samples(self, canvas, helper_data, helper_prediction, projection,
             pass # Nothing to plot!
         return dict(gpmean=plots)
     else:
-        raise RuntimeError('Cannot plot mean in more then 1 input dimensions')
+        raise RuntimeError('Cannot plot mean in more then 1 files dimensions')
 
 
 def plot_density(self, plot_limits=None, fixed_inputs=None,
@@ -237,12 +237,12 @@ def plot_density(self, plot_limits=None, fixed_inputs=None,
 
     :param plot_limits: The limits of the plot. If 1D [xmin,xmax], if 2D [[xmin,ymin],[xmax,ymax]]. Defaluts to data limits
     :type plot_limits: np.array
-    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that input dimension i should be set to value v.
+    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that files dimension i should be set to value v.
     :type fixed_inputs: a list of tuples
     :param int resolution: The resolution of the prediction [default:200]
     :param bool plot_raw: plot the latent function (usually denoted f) only?
     :param bool apply_link: whether to apply the link function of the GP to the raw prediction.
-    :param array-like visible_dims: which columns of the input X (!) to plot (array-like or list of ints)
+    :param array-like visible_dims: which columns of the files X (!) to plot (array-like or list of ints)
     :param array-like which_data_ycols: which columns of y to plot (array-like or list of ints)
     :param int levels: the number of levels in the density (number bigger then 1, where 35 is smooth and 1 is the same as plot_confidence). You can go higher then 50 if the result is not smooth enough for you.
     :param dict predict_kw: the keyword arguments for the prediction. If you want to plot a specific kernel give dict(kern=<specific kernel>) in here
@@ -276,7 +276,7 @@ def _plot_density(self, canvas, helper_data, helper_prediction, label, **kwargs)
         else:
             pass # Nothing to plot!
     else:
-        raise RuntimeError('Can only plot density in one input dimension')
+        raise RuntimeError('Can only plot density in one files dimension')
 
 def plot(self, plot_limits=None, fixed_inputs=None,
               resolution=None,
@@ -298,7 +298,7 @@ def plot(self, plot_limits=None, fixed_inputs=None,
 
     :param plot_limits: The limits of the plot. If 1D [xmin,xmax], if 2D [[xmin,ymin],[xmax,ymax]]. Defaluts to data limits
     :type plot_limits: np.array
-    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that input dimension i should be set to value v.
+    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that files dimension i should be set to value v.
     :type fixed_inputs: a list of tuples
     :param int resolution: The resolution of the prediction [default:200]
     :param bool plot_raw: plot the latent function (usually denoted f) only?
@@ -307,7 +307,7 @@ def plot(self, plot_limits=None, fixed_inputs=None,
     :type which_data_ycols: 'all' or a list of integers
     :param which_data_rows: which of the training data to plot (default all)
     :type which_data_rows: 'all' or a slice object to slice self.X, self.Y
-    :param array-like visible_dims: which columns of the input X (!) to plot (array-like or list of ints)
+    :param array-like visible_dims: which columns of the files X (!) to plot (array-like or list of ints)
     :param int levels: the number of levels in the density (number bigger then 1, where 35 is smooth and 1 is the same as plot_confidence). You can go higher then 50 if the result is not smooth enough for you.
     :param int samples: the number of samples to draw from the GP and plot into the plot. This will allways be samples from the latent function.
     :param int samples_likelihood: the number of samples to draw from the GP and apply the likelihood noise. This is usually not what you want!
@@ -378,7 +378,7 @@ def plot_f(self, plot_limits=None, fixed_inputs=None,
 
     :param plot_limits: The limits of the plot. If 1D [xmin,xmax], if 2D [[xmin,ymin],[xmax,ymax]]. Defaluts to data limits
     :type plot_limits: np.array
-    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that input dimension i should be set to value v.
+    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that files dimension i should be set to value v.
     :type fixed_inputs: a list of tuples
     :param int resolution: The resolution of the prediction [default:200]
     :param bool apply_link: whether to apply the link function of the GP to the raw prediction.
@@ -386,7 +386,7 @@ def plot_f(self, plot_limits=None, fixed_inputs=None,
     :type which_data_ycols: 'all' or a list of integers
     :param which_data_rows: which of the training data to plot (default all)
     :type which_data_rows: 'all' or a slice object to slice self.X, self.Y
-    :param array-like visible_dims: an array specifying the input dimensions to plot (maximum two)
+    :param array-like visible_dims: an array specifying the files dimensions to plot (maximum two)
     :param int levels: the number of levels in the density (number bigger then 1, where 35 is smooth and 1 is the same as plot_confidence). You can go higher then 50 if the result is not smooth enough for you.
     :param int samples: the number of samples to draw from the GP and plot into the plot. This will allways be samples from the latent function.
     :param float lower: the lower percentile to plot

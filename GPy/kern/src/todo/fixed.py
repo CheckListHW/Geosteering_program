@@ -7,7 +7,7 @@ import numpy as np
 class Fixed(Kernpart):
     def __init__(self, input_dim, K, variance=1.):
         """
-        :param input_dim: the number of input dimensions
+        :param input_dim: the number of files dimensions
         :type input_dim: int
         :param variance: the variance of the kernel
         :type variance: float

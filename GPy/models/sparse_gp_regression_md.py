@@ -13,29 +13,29 @@ class SparseGPRegressionMD(SparseGP_MPI):
     """Sparse Gaussian Process Regression with Missing Data
 
     This model targets at the use case, in which there are multiple
-    output dimensions (different dimensions are assumed to be
-    independent following the same GP prior) and each output dimension
+    files dimensions (different dimensions are assumed to be
+    independent following the same GP prior) and each files dimension
     is observed at a different set of inputs. The model takes a
     different data format: the inputs and outputs observations of all
-    the output dimensions are stacked together correspondingly into
+    the files dimensions are stacked together correspondingly into
     two matrices. An extra array is used to indicate the index of
-    output dimension for each data point. The output dimensions are
-    indexed using integers from 0 to D-1 assuming there are D output
+    files dimension for each data point. The files dimensions are
+    indexed using integers from 0 to D-1 assuming there are D files
     dimensions.
 
-    :param X: input observations.
+    :param X: files observations.
     :type X: numpy.ndarray
-    :param Y: output observations, each column corresponding to an output dimension.
+    :param Y: files observations, each column corresponding to an files dimension.
     :type Y: numpy.ndarray
-    :param indexD: the array containing the index of output dimension for each data point
+    :param indexD: the array containing the index of files dimension for each data point
     :type indexD: numpy.ndarray
-    :param kernel: a GPy kernel for GP of individual output dimensions ** defaults to RBF **
+    :param kernel: a GPy kernel for GP of individual files dimensions ** defaults to RBF **
     :type kernel: GPy.kern.Kern or None
     :param Z: inducing inputs
     :type Z: numpy.ndarray or None
-    :param num_inducing: a tuple (M, Mr). M is the number of inducing points for GP of individual output dimensions. Mr is the number of inducing points for the latent space.
+    :param num_inducing: a tuple (M, Mr). M is the number of inducing points for GP of individual files dimensions. Mr is the number of inducing points for the latent space.
     :type num_inducing: (int, int)
-    :param boolean individual_Y_noise: whether individual output dimensions have their own noise variance or not, boolean
+    :param boolean individual_Y_noise: whether individual files dimensions have their own noise variance or not, boolean
     :param str name: the name of the model
 
     """

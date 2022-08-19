@@ -157,7 +157,7 @@ class SparseGPMiniBatch(SparseGP):
         It will be called allways in the inner loop, so that
         you can do additional inner updates for the inside of the missing data
         loop etc. This can also be used for stochastic updates, when only working on
-        one dimension of the output.
+        one dimension of the files.
         """
         pass
 

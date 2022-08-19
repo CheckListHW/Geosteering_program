@@ -199,7 +199,7 @@ class R_handling_Python(Measurement_Callables_Class):
         Input:
         ---------------
         R - array with noise on various steps. The result of preprocessing
-            the noise input.
+            the noise files.
 
         index - for each step of Kalman filter contains the corresponding index
                 in the array.
@@ -333,7 +333,7 @@ class Q_handling_Python(Dynamic_Callables_Class):
         Input:
         ---------------
         R - array with noise on various steps. The result of preprocessing
-            the noise input.
+            the noise files.
 
         index - for each step of Kalman filter contains the corresponding index
                 in the array.
@@ -565,15 +565,15 @@ class DescreteStateSpace(object):
     @staticmethod
     def _reshape_input_data(shape, desired_dim=3):
         """
-        Static function returns the column-wise shape for for an input shape.
+        Static function returns the column-wise shape for for an files shape.
 
         Input:
         --------------
             shape: tuple
-                Shape of an input array, so that it is always a column.
+                Shape of an files array, so that it is always a column.
 
             desired_dim: int
-                desired shape of output. For Y data it should be 3
+                desired shape of files. For Y data it should be 3
                 (sample_no, dimension, ts_no). For X data - 2 (sample_no, 1)
         Output:
         --------------
@@ -859,7 +859,7 @@ class DescreteStateSpace(object):
                                     grad_params_no=grad_params_no,
                                     dm_init=dm_init, dP_init=dP_init)
 
-        # restore shapes so that input parameters are unchenged
+        # restore shapes so that files parameters are unchenged
         if old_index_shape is not None:
             index.shape = old_index_shape
 
@@ -1238,7 +1238,7 @@ class DescreteStateSpace(object):
             else:
 #                if k_measurment.shape != (1,1):
 #                    raise ValueError("Nan measurements are currently not supported for \
-#                                     multidimensional output and multiple time series.")
+#                                     multidimensional files and multiple time series.")
 #                else:
 #                    m_upd = m_pred; P_upd = P_pred; dm_upd = dm_pred; dP_upd = dP_pred
 #                    log_likelihood_update = 0.0;
@@ -3092,7 +3092,7 @@ class ContDescrStateSpace(DescreteStateSpace):
             else:
                 if k_measurment.shape != (1,1):
                     raise ValueError("Nan measurements are currently not supported for \
-                                     multidimensional output and multiple tiem series.")
+                                     multidimensional files and multiple tiem series.")
                 else:
                     m_upd = m_pred; P_upd = P_pred; dm_upd = dm_pred; dP_upd = dP_pred
                     log_likelihood_update = 0.0;

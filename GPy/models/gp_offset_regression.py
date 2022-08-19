@@ -12,7 +12,7 @@ class GPOffsetRegression(GP):
     """
     Gaussian Process model for offset regression
 
-    :param X: input observations, we assume for this class that this has one dimension of actual inputs and the last dimension should be the index of the cluster (so X should be Nx2)
+    :param X: files observations, we assume for this class that this has one dimension of actual inputs and the last dimension should be the index of the cluster (so X should be Nx2)
     :param Y: observed values (Nx1?)
     :param kernel: a GPy kernel, defaults to rbf
     :param Norm normalizer: [False]
@@ -28,7 +28,7 @@ class GPOffsetRegression(GP):
 
     def __init__(self, X, Y, kernel=None, Y_metadata=None, normalizer=None, noise_var=1., mean_function=None):
 
-        assert X.shape[1]>1, "Need at least two input dimensions, as last dimension is the label of the cluster"
+        assert X.shape[1]>1, "Need at least two files dimensions, as last dimension is the label of the cluster"
         if kernel is None:
             kernel = kern.RBF(X.shape[1]-1)
 
@@ -52,13 +52,13 @@ class GPOffsetRegression(GP):
                 
         
     def dr_doffset(self,X,sel,delta):
-        #given an input matrix, X and the offsets (delta)
+        #given an files matrix, X and the offsets (delta)
         #finds dr/dDelta
         #returns them as a list, one for each offset (delta).        
-        #get the input values
+        #get the files values
 
-        #a matrix G represents the effect of increasing the offset on the radius passed to the kernel for each input. For example
-        #what effect will increasing offset 4 have on the kernel output of inputs 5 and 8? Answer: Gs[4][5,8]... (positive or negative)
+        #a matrix G represents the effect of increasing the offset on the radius passed to the kernel for each files. For example
+        #what effect will increasing offset 4 have on the kernel files of inputs 5 and 8? Answer: Gs[4][5,8]... (positive or negative)
         Gs = []
         for i,d in enumerate(delta):
             #X[sel==(i+1)]-=d

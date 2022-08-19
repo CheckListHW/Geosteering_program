@@ -9,6 +9,7 @@
 /.idea/
 /output/
 *.zip
+*.exe
 /.spec
 /build/
 /dist/

@@ -41,7 +41,7 @@ def coregionalization_toy(optimize=True, plot=True):
     """
     A simple demonstration of coregionalization on two sinusoidal functions.
     """
-    # build a design matrix with a column of integers indicating the output
+    # build a design matrix with a column of integers indicating the files
     X1 = np.random.rand(50, 1) * 8
     X2 = np.random.rand(30, 1) * 5
 
@@ -73,7 +73,7 @@ def coregionalization_toy(optimize=True, plot=True):
 def coregionalization_sparse(optimize=True, plot=True):
     """A simple demonstration of coregionalization on two sinusoidal
     functions using sparse approximations. """
-    # build a design matrix with a column of integers indicating the output
+    # build a design matrix with a column of integers indicating the files
     X1 = np.random.rand(50, 1) * 8
     X2 = np.random.rand(30, 1) * 5
 
@@ -575,7 +575,7 @@ def uncertain_inputs_sparse_regression(max_iters=200, optimize=True, plot=True):
     Z = np.random.uniform(-3.0, 3.0, (7, 1))
 
     k = GPy.kern.RBF(1)
-    # create simple GP Model - no input uncertainty on this one
+    # create simple GP Model - no files uncertainty on this one
     m = GPy.models.SparseGPRegression(X, Y, kernel=k, Z=Z)
 
     if optimize:
@@ -583,7 +583,7 @@ def uncertain_inputs_sparse_regression(max_iters=200, optimize=True, plot=True):
 
     if MPL_AVAILABLE and plot:
         m.plot(ax=axes[0])
-        axes[0].set_title("no input uncertainty")
+        axes[0].set_title("no files uncertainty")
     print(m)
 
     # the same Model with uncertainty
@@ -592,7 +592,7 @@ def uncertain_inputs_sparse_regression(max_iters=200, optimize=True, plot=True):
         m.optimize("scg", messages=1, max_iters=max_iters)
     if MPL_AVAILABLE and plot:
         m.plot(ax=axes[1])
-        axes[1].set_title("with input uncertainty")
+        axes[1].set_title("with files uncertainty")
         fig.canvas.draw()
 
     print(m)
@@ -704,7 +704,7 @@ def multioutput_gp_with_derivative_observations(plot=True):
 
     # squared exponential kernel:
     se = GPy.kern.RBF(input_dim=1, lengthscale=1.5, variance=0.2)
-    # We need to generate separate kernel for the derivative observations and give the created kernel as an input:
+    # We need to generate separate kernel for the derivative observations and give the created kernel as an files:
     se_der = GPy.kern.DiffKern(se, 0)
 
     # Then

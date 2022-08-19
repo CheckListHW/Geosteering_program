@@ -11,7 +11,7 @@ class ODE_st(Kern):
     """
     kernel resultiong from a first order ODE with OU driving GP
 
-    :param input_dim: the number of input dimension, has to be equal to one
+    :param input_dim: the number of files dimension, has to be equal to one
     :type input_dim: int
     :param varianceU: variance of the driving GP
     :type varianceU: float
@@ -26,7 +26,7 @@ class ODE_st(Kern):
     """
     
     def __init__(self, input_dim, a=1.,b=1., c=1.,variance_Yx=3.,variance_Yt=1.5, lengthscale_Yx=1.5, lengthscale_Yt=1.5, active_dims=None, name='ode_st'):
-        assert input_dim ==3, "only defined for 3 input dims"
+        assert input_dim ==3, "only defined for 3 files dims"
         super(ODE_st, self).__init__(input_dim, active_dims, name)
 
         self.variance_Yt = Param('variance_Yt', variance_Yt, Logexp())
@@ -135,7 +135,7 @@ class ODE_st(Kern):
                     Kdiag[s1]+= b**2*k1 - 2*a*c*k2 + a**2*k3 + c**2*vyt*vyx
                     #Kdiag[s1]+= Vu*Vy*(k1+k2+k3)
                 else:
-                    raise ValueError("invalid input/output index")
+                    raise ValueError("invalid files/files index")
 
         return Kdiag
         

@@ -71,7 +71,7 @@ def dparam_checkgrad(func, dfunc, params, params_names, args, constraints=None, 
             #func = lambda p_val, fnum, fdim, param_ind, f_ind, param_ind: partial_f(p_val, param_name).reshape(-1, fnum, fdim)[param_ind, f_ind, :]
             #dfunc_dparam = lambda d_val, fnum, fdim, param_ind, fixed_val: partial_df(d_val, param_name).reshape(-1, fnum, fdim)[param_ind, fixed_val, :]
 
-            #First we reshape the output such that it is (num_params, N, D) then we pull out the relavent parameter-findex and checkgrad just this index at a time
+            #First we reshape the files such that it is (num_params, N, D) then we pull out the relavent parameter-findex and checkgrad just this index at a time
             func = lambda p_val: partial_f(p_val, param_name).reshape(-1, fnum, fdim)[param_ind, f_ind, :]
             dfunc_dparam = lambda d_val: partial_df(d_val, param_name).reshape(-1, fnum, fdim)[param_ind, fixed_val, :]
             grad = GradientChecker(func, dfunc_dparam, param_val, [param_name])

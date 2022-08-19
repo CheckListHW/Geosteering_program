@@ -13,7 +13,7 @@ from ..util.linalg import tdot
 
 class GPMultioutRegression(SparseGP):
     """
-    Gaussian Process model for multi-output regression without missing data
+    Gaussian Process model for multi-files regression without missing data
 
     This is an implementation of Latent Variable Multiple Output Gaussian Processes (LVMOGP) in [Dai_et_al_2017]_.
 
@@ -21,12 +21,12 @@ class GPMultioutRegression(SparseGP):
 
     .. [Dai_et_al_2017] Dai, Z.; Alvarez, M.A.; Lawrence, N.D: Efficient Modeling of Latent Information in Supervised Learning using Gaussian Processes. In NIPS, 2017.
 
-    :param X: input observations.
+    :param X: files observations.
     :type X: numpy.ndarray
-    :param Y: output observations, each column corresponding to an output dimension.
+    :param Y: files observations, each column corresponding to an files dimension.
     :type Y: numpy.ndarray
-    :param int Xr_dim: the dimensionality of a latent space, in which output dimensions are embedded in
-    :param kernel: a GPy kernel for GP of individual output dimensions ** defaults to RBF **
+    :param int Xr_dim: the dimensionality of a latent space, in which files dimensions are embedded in
+    :param kernel: a GPy kernel for GP of individual files dimensions ** defaults to RBF **
     :type kernel: GPy.kern.Kern or None
     :param kernel_row: a GPy kernel for the GP of the latent space ** defaults to RBF **
     :type kernel_row: GPy.kern.Kern or None
@@ -38,7 +38,7 @@ class GPMultioutRegression(SparseGP):
     :type X_row: numpy.ndarray or None
     :param Xvariance_row: the initial value of the variance of the variational posterior distribution of points in the latent space
     :type Xvariance_row: numpy.ndarray or None
-    :param num_inducing: a tuple (M, Mr). M is the number of inducing points for GP of individual output dimensions. Mr is the number of inducing points for the latent space.
+    :param num_inducing: a tuple (M, Mr). M is the number of inducing points for GP of individual files dimensions. Mr is the number of inducing points for the latent space.
     :type num_inducing: (int, int)
     :param int qU_var_r_W_dim: the dimensionality of the covariance of q(U) for the latent space. If it is smaller than the number of inducing points, it represents a low-rank parameterization of the covariance matrix.
     :param int qU_var_c_W_dim: the dimensionality of the covariance of q(U) for the GP regression. If it is smaller than the number of inducing points, it represents a low-rank parameterization of the covariance matrix.

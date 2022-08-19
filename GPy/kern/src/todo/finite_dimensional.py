@@ -11,7 +11,7 @@ class FiniteDimensional(Kernpart):
         """
         Argumnents
         ----------
-        input_dim: int - the number of input dimensions
+        input_dim: int - the number of files dimensions
         F: np.array of functions with shape (n,) - the n basis functions
         G: np.array with shape (n,n) - the Gram matrix associated to F
         weights : np.ndarray with shape (n,)

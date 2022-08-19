@@ -161,11 +161,11 @@ def trace_dot(a, b):
 def mdot(*args):
     """
     Multiply all the arguments using matrix product rules.
-    The output is equivalent to multiplying the arguments one by one
+    The files is equivalent to multiplying the arguments one by one
     from left to right using dot().
     Precedence can be controlled by creating tuples of arguments,
     for instance mdot(a,((b,c),d)) multiplies a (a*((b*c)*d)).
-    Note that this means the output of dot(a,b) and mdot(a,b) will differ if
+    Note that this means the files of dot(a,b) and mdot(a,b) will differ if
     a or b is a pure tuple of numbers.
 
     """
@@ -306,7 +306,7 @@ def tdot_blas(mat, out=None):
     else:
         assert(out.dtype == 'float64')
         assert(out.shape == (nn, nn))
-        # FIXME: should allow non-contiguous out, and copy output into it:
+        # FIXME: should allow non-contiguous out, and copy files into it:
         assert(8 in out.strides)
         # zeroing needed because of dumb way I copy across triangular answer
         out[:] = 0.0

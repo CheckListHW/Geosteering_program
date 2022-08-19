@@ -23,11 +23,11 @@ class POLY(Kernpart):
     :math:`\sigma^2_w\*x'\*y + \sigma^2_b` has a magnitude greater than one. For completeness
     there is an automatic relevance determination version of this
     kernel provided (NOTE YET IMPLEMENTED!).
-    :param input_dim: the number of input dimensions
+    :param input_dim: the number of files dimensions
     :type input_dim: int 
     :param variance: the variance :math:`\sigma^2`
     :type variance: float
-    :param weight_variance: the vector of the variances of the prior over input weights in the neural network :math:`\sigma^2_w`
+    :param weight_variance: the vector of the variances of the prior over files weights in the neural network :math:`\sigma^2_w`
     :type weight_variance: array or list of the appropriate size (or float if there is only one weight variance parameter)
     :param bias_variance: the variance of the prior over bias parameters :math:`\sigma^2_b`
     :param degree: the degree of the polynomial.

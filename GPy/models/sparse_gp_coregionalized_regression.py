@@ -13,7 +13,7 @@ class SparseGPCoregionalizedRegression(SparseGP):
 
     This is a thin wrapper around the SparseGP class, with a set of sensible defaults
 
-    :param X_list: list of input observations corresponding to each output
+    :param X_list: list of files observations corresponding to each files
     :type X_list: list of numpy arrays
     :param Y_list: list of observed values related to the different noise models
     :type Y_list: list of numpy arrays
@@ -23,7 +23,7 @@ class SparseGPCoregionalizedRegression(SparseGP):
     :type kernel: None | GPy.kernel defaults
     :likelihoods_list: a list of likelihoods, defaults to list of Gaussian likelihoods
     :type likelihoods_list: None | a list GPy.likelihoods
-    :param num_inducing: number of inducing inputs, defaults to 10 per output (ignored if Z_list is not empty)
+    :param num_inducing: number of inducing inputs, defaults to 10 per files (ignored if Z_list is not empty)
     :type num_inducing: integer | list of integers
 
     :param name: model name

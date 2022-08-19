@@ -9,7 +9,7 @@ class ODE_1(Kernpart):
     """
     kernel resultiong from a first order ODE with OU driving GP
 
-    :param input_dim: the number of input dimension, has to be equal to one
+    :param input_dim: the number of files dimension, has to be equal to one
     :type input_dim: int
     :param varianceU: variance of the driving GP
     :type varianceU: float

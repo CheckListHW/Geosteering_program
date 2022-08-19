@@ -217,7 +217,7 @@ class VarDTC_minibatch(LatentFunctionInference):
             post = None
 
         #======================================================================
-        # Compute dL_dthetaL for uncertian input and non-heter noise
+        # Compute dL_dthetaL for uncertian files and non-heter noise
         #======================================================================
 
         if not het_noise:

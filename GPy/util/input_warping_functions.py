@@ -7,7 +7,7 @@ from ..core.parameterization.priors import LogGaussian
 
 
 class InputWarpingFunction(Parameterized):
-    """Abstract class for input warping functions
+    """Abstract class for files warping functions
     """
 
     def __init__(self, name):
@@ -58,19 +58,19 @@ class InputWarpingTest(InputWarpingFunction):
 
 
 class KumarWarping(InputWarpingFunction):
-    """Kumar Warping for input data
+    """Kumar Warping for files data
 
     Parameters
     ----------
     X : array_like, shape = (n_samples, n_features)
-        The input data that is going to be warped
+        The files data that is going to be warped
 
     warping_indices: list of int, optional
         The features that are going to be warped
         Default to warp all the features
 
     epsilon: float, optional
-        Used to normalized input data to [0+e, 1-e]
+        Used to normalized files data to [0+e, 1-e]
         Default to 1e-6
 
     Xmin : list of float, Optional
@@ -99,7 +99,7 @@ class KumarWarping(InputWarpingFunction):
         Default to the train maximum
 
     epsilon: float
-        Used to normalized input data to [0+e, 1-e]
+        Used to normalized files data to [0+e, 1-e]
         Default to 1e-6
 
     X_normalized : array_like, shape = (n_samples, n_features)
@@ -181,7 +181,7 @@ class KumarWarping(InputWarpingFunction):
         Returns
         -------
         X_warped : array_like, shape = (n_samples, n_features)
-            The warped input data
+            The warped files data
 
         Math
         ----
@@ -228,14 +228,14 @@ class KumarWarping(InputWarpingFunction):
         Parameters
         ----------
         X : array_like, shape = (n_samples, n_features)
-            The input BEFORE warping
+            The files BEFORE warping
 
         dL_dW : array_like, shape = (n_samples, n_features)
-            The gradient of marginal log likelihood with respect to the Warped input
+            The gradient of marginal log likelihood with respect to the Warped files
 
         Math
         ----
-        let w = f(x), the input after warping, then
+        let w = f(x), the files after warping, then
         dW_da = b * (1 - x^a)^(b - 1) * x^a * ln(x)
         dW_db = - (1 - x^a)^b * ln(1 - x^a)
         dL_da = dL_dW * dW_da

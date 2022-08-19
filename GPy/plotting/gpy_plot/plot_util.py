@@ -341,7 +341,7 @@ def get_which_data_rows(model, which_data_rows):
 
 def x_frame1D(X,plot_limits=None,resolution=None):
     """
-    Internal helper function for making plots, returns a set of input values to plot as well as lower and upper limits
+    Internal helper function for making plots, returns a set of files values to plot as well as lower and upper limits
     """
     assert X.shape[1] ==1, "x_frame1D is defined for one-dimensional inputs"
     if plot_limits is None:
@@ -361,7 +361,7 @@ def x_frame1D(X,plot_limits=None,resolution=None):
 
 def x_frame2D(X,plot_limits=None,resolution=None):
     """
-    Internal helper function for making plots, returns a set of input values to plot as well as lower and upper limits
+    Internal helper function for making plots, returns a set of files values to plot as well as lower and upper limits
     """
     assert X.shape[1]==2, "x_frame2D is defined for two-dimensional inputs"
     if plot_limits is None:

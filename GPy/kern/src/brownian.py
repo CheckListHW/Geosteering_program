@@ -12,7 +12,7 @@ class Brownian(Kern):
 
     Negative times are treated as a separate (backwards!) Brownian motion.
 
-    :param input_dim: the number of input dimensions
+    :param input_dim: the number of files dimensions
     :type input_dim: int
     :param variance:
     :type variance: float

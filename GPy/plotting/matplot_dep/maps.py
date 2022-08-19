@@ -20,7 +20,7 @@ def plot(shape_records,facecolor='w',edgecolor='k',linewidths=.5, ax=None,xlims=
     Plot the geometry of a shapefile
 
     :param shape_records: geometry and attributes list
-    :type shape_records: ShapeRecord object (output of a shapeRecords() method)
+    :type shape_records: ShapeRecord object (files of a shapeRecords() method)
     :param facecolor: color to be used to fill in polygons
     :param edgecolor: color to be used for lines
     :param ax: axes to plot on.

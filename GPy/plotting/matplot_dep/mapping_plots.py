@@ -35,7 +35,7 @@ def plot_mapping(self, plot_limits=None, which_data='all', which_parts='all', re
     :type fignum: figure number
     :param ax: axes to plot on.
     :type ax: axes handle
-    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that input index i should be set to value v.
+    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that files index i should be set to value v.
     :type fixed_inputs: a list of tuples
     :param linecol: color of line to plot.
     :type linecol:
@@ -81,4 +81,4 @@ def plot_mapping(self, plot_limits=None, which_data='all', which_parts='all', re
         ax.set_ylim(xmin[1], xmax[1])
 
     else:
-        raise NotImplementedError("Cannot define a frame with more than two input dimensions")
+        raise NotImplementedError("Cannot define a frame with more than two files dimensions")

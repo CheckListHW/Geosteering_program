@@ -19,7 +19,7 @@ class sde_Matern32(Matern32):
 
     .. math::
 
-       k(r) = \sigma^2 (1 + \sqrt{3} r) \exp(- \sqrt{3} r) \\ \\ \\ \\  \text{ where  } r = \sqrt{\sum_{i=1}^{input dim} \frac{(x_i-y_i)^2}{\ell_i^2} }
+       k(r) = \sigma^2 (1 + \sqrt{3} r) \exp(- \sqrt{3} r) \\ \\ \\ \\  \text{ where  } r = \sqrt{\sum_{i=1}^{files dim} \frac{(x_i-y_i)^2}{\ell_i^2} }
 
     """
     def sde_update_gradient_full(self, gradients):
@@ -79,7 +79,7 @@ class sde_Matern52(Matern52):
 
     .. math::
 
-       k(r) = \sigma^2 (1 + \sqrt{5} r + \frac{5}{3}r^2) \exp(- \sqrt{5} r) \\ \\ \\ \\  \text{ where  } r = \sqrt{\sum_{i=1}^{input dim} \frac{(x_i-y_i)^2}{\ell_i^2} }
+       k(r) = \sigma^2 (1 + \sqrt{5} r + \frac{5}{3}r^2) \exp(- \sqrt{5} r) \\ \\ \\ \\  \text{ where  } r = \sqrt{\sum_{i=1}^{files dim} \frac{(x_i-y_i)^2}{\ell_i^2} }
 
     """
     def sde_update_gradient_full(self, gradients):

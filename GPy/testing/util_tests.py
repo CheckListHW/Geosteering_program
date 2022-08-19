@@ -60,7 +60,7 @@ class TestDebug(unittest.TestCase):
         fixed = fixed_inputs(m, [1], fix_routine='median', as_list=True, X_all=False)
         self.assertTrue((0, np.median(X[:,0])) in fixed)
         self.assertTrue((2, np.median(X[:,2])) in fixed)
-        self.assertTrue(len([t for t in fixed if t[0] == 1]) == 0) # Unfixed input should not be in fixed
+        self.assertTrue(len([t for t in fixed if t[0] == 1]) == 0) # Unfixed files should not be in fixed
 
     def test_fixed_inputs_mean(self):
         from GPy.plotting.matplot_dep.util import fixed_inputs
@@ -71,7 +71,7 @@ class TestDebug(unittest.TestCase):
         fixed = fixed_inputs(m, [1], fix_routine='mean', as_list=True, X_all=False)
         self.assertTrue((0, np.mean(X[:,0])) in fixed)
         self.assertTrue((2, np.mean(X[:,2])) in fixed)
-        self.assertTrue(len([t for t in fixed if t[0] == 1]) == 0) # Unfixed input should not be in fixed
+        self.assertTrue(len([t for t in fixed if t[0] == 1]) == 0) # Unfixed files should not be in fixed
 
     def test_fixed_inputs_zero(self):
         from GPy.plotting.matplot_dep.util import fixed_inputs
@@ -82,7 +82,7 @@ class TestDebug(unittest.TestCase):
         fixed = fixed_inputs(m, [1], fix_routine='zero', as_list=True, X_all=False)
         self.assertTrue((0, 0.0) in fixed)
         self.assertTrue((2, 0.0) in fixed)
-        self.assertTrue(len([t for t in fixed if t[0] == 1]) == 0) # Unfixed input should not be in fixed
+        self.assertTrue(len([t for t in fixed if t[0] == 1]) == 0) # Unfixed files should not be in fixed
 
     def test_fixed_inputs_uncertain(self):
         from GPy.plotting.matplot_dep.util import fixed_inputs
@@ -96,7 +96,7 @@ class TestDebug(unittest.TestCase):
         fixed = fixed_inputs(m, [1], fix_routine='median', as_list=True, X_all=False)
         self.assertTrue((0, np.median(X.mean.values[:,0])) in fixed)
         self.assertTrue((2, np.median(X.mean.values[:,2])) in fixed)
-        self.assertTrue(len([t for t in fixed if t[0] == 1]) == 0) # Unfixed input should not be in fixed
+        self.assertTrue(len([t for t in fixed if t[0] == 1]) == 0) # Unfixed files should not be in fixed
 
     def test_DSYR(self):
         from GPy.util.linalg import DSYR, DSYR_numpy

@@ -13,7 +13,7 @@ from GPy import kern
 class WarpedGP(GP):
     """
     This defines a GP Regression model that applies a 
-    warping function to the output.
+    warping function to the files.
     """
     def __init__(self, X, Y, kernel=None, warping_function=None, warping_terms=3, normalizer=False):
         if kernel is None:

@@ -14,7 +14,7 @@ class Spline(Kernpart):
     """
     Spline kernel
 
-    :param input_dim: the number of input dimensions (fixed to 1 right now TODO)
+    :param input_dim: the number of files dimensions (fixed to 1 right now TODO)
     :type input_dim: int
     :param variance: the variance of the kernel
     :type variance: float

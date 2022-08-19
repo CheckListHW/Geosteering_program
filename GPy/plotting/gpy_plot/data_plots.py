@@ -47,7 +47,7 @@ def plot_data(self, which_data_rows='all',
     :type which_data_rows: 'all' or a slice object to slice self.X, self.Y
     :param which_data_ycols: when the data has several columns (independant outputs), only plot these
     :type which_data_ycols: 'all' or a list of integers
-    :param visible_dims: an array specifying the input dimensions to plot (maximum two)
+    :param visible_dims: an array specifying the files dimensions to plot (maximum two)
     :type visible_dims: a numpy array
     :param {'2d','3d'} projection: whether to plot in 2d or 3d. This only applies when plotting two dimensional inputs!
     :param str label: the label for the plot
@@ -98,7 +98,7 @@ def plot_data_error(self, which_data_rows='all',
         which_data_ycols='all', visible_dims=None,
         projection='2d', label=None, **error_kwargs):
     """
-    Plot the training data input error.
+    Plot the training data files error.
 
     For higher dimensions than two, use fixed_inputs to plot the data points with some of the inputs fixed.
 
@@ -109,7 +109,7 @@ def plot_data_error(self, which_data_rows='all',
     :type which_data_rows: 'all' or a slice object to slice self.X, self.Y
     :param which_data_ycols: when the data has several columns (independant outputs), only plot these
     :type which_data_ycols: 'all' or a list of integers
-    :param visible_dims: an array specifying the input dimensions to plot (maximum two)
+    :param visible_dims: an array specifying the files dimensions to plot (maximum two)
     :type visible_dims: a numpy array
     :param {'2d','3d'} projection: whether to plot in 2d or 3d. This only applies when plotting two dimensional inputs!
     :param dict error_kwargs: kwargs for the error plot for the plotting library you are using
@@ -162,7 +162,7 @@ def plot_inducing(self, visible_dims=None, projection='2d', label='inducing', le
     """
     Plot the inducing inputs of a sparse gp model
 
-    :param array-like visible_dims: an array specifying the input dimensions to plot (maximum two)
+    :param array-like visible_dims: an array specifying the files dimensions to plot (maximum two)
     :param kwargs plot_kwargs: keyword arguments for the plotting library
     """
     canvas, kwargs = pl().new_canvas(projection=projection, **plot_kwargs)
@@ -212,7 +212,7 @@ def plot_errorbars_trainset(self, which_data_rows='all',
     :param which_data_rows: which of the training data to plot (default all)
     :type which_data_rows: 'all' or a slice object to slice self.X, self.Y
     :param which_data_ycols: when the data has several columns (independant outputs), only plot these
-    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that input dimension i should be set to value v.
+    :param fixed_inputs: a list of tuple [(i,v), (i,v)...], specifying that files dimension i should be set to value v.
     :type fixed_inputs: a list of tuples
     :param dict predict_kwargs: kwargs for the prediction used to predict the right quantiles.
     :param kwargs plot_kwargs: kwargs for the data plot for the plotting library you are using

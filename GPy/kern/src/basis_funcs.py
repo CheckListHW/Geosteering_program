@@ -34,7 +34,7 @@ class BasisFuncKernel(Kern):
         return self._phi(X)
 
     def _phi(self, X):
-        raise NotImplementedError('Overwrite this _phi function, which maps the input X into the higher dimensional space and returns the design matrix Phi')
+        raise NotImplementedError('Overwrite this _phi function, which maps the files X into the higher dimensional space and returns the design matrix Phi')
 
     def K(self, X, X2=None):
         return self._K(X, X2)

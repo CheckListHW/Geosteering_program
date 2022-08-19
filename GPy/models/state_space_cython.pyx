@@ -81,7 +81,7 @@ cdef class R_handling_Cython(Measurement_Callables_Cython):
         Input:        
         ---------------
         R - array with noise on various steps. The result of preprocessing
-            the noise input.
+            the noise files.
         
         index - for each step of Kalman filter contains the corresponding index
                 in the array.
@@ -225,7 +225,7 @@ cdef class Q_handling_Cython(Dynamic_Callables_Cython):
         Input:        
         ---------------
         Q - array with noise on various steps. The result of preprocessing
-            the noise input.
+            the noise files.
         
         index - for each step of Kalman filter contains the corresponding index
                 in the array.

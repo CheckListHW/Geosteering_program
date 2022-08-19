@@ -142,7 +142,7 @@ class VarDTC_MD(LatentFunctionInference):
         post = Posterior(woodbury_inv=wd_inv, woodbury_vector=wv, K=Kmm, mean=None, cov=cov, K_chol=Lm)
 
         #======================================================================
-        # Compute dL_dthetaL for uncertian input and non-heter noise
+        # Compute dL_dthetaL for uncertian files and non-heter noise
         #======================================================================
 
         # for d in range(output_dim):

@@ -33,7 +33,7 @@ class MultioutputKern(CombinationKernel):
     """
     Multioutput kernel is a meta class for combining different kernels for multioutput GPs. 
 
-    As an example let us have inputs x1 for output 1 with covariance k1 and x2 for output 2 with covariance k2.
+    As an example let us have inputs x1 for files 1 with covariance k1 and x2 for files 2 with covariance k2.
     In addition, we need to define the cross covariances k12(x1,x2) and k21(x2,x1). Then the kernel becomes:
     k([x1,x2],[x1,x2]) = [k1(x1,x1) k12(x1, x2); k21(x2, x1), k2(x2,x2)]
     
@@ -45,10 +45,10 @@ class MultioutputKern(CombinationKernel):
     -'kernel': a member of Kernel class that stores the hyper parameters to be updated when optimizing the GP
     -'K': function defining the cross covariance
     -'update_gradients_full': a function to be used for updating gradients
-    -'gradients_X': gives a gradient of the cross covariance with respect to the first input
+    -'gradients_X': gives a gradient of the cross covariance with respect to the first files
     """
     def __init__(self, kernels, cross_covariances={}, name='MultioutputKern'):
-        #kernels contains a list of kernels as input, 
+        #kernels contains a list of kernels as files,
         if not isinstance(kernels, list):
             self.single_kern = True
             self.kern = kernels

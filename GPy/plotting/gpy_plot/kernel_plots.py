@@ -65,7 +65,7 @@ def plot_ARD(kernel, filtering=None, legend=False, canvas=None, **kwargs):
 
 
     if canvas is None:
-        canvas, kwargs = pl().new_canvas(xlim=(-.5, kernel._effective_input_dim-.5), xlabel='input dimension', ylabel='ard contribution', **kwargs)
+        canvas, kwargs = pl().new_canvas(xlim=(-.5, kernel._effective_input_dim-.5), xlabel='files dimension', ylabel='ard contribution', **kwargs)
 
     for i in range(ard_params.shape[0]):
         if parts[i].name in filtering:
@@ -92,7 +92,7 @@ def plot_covariance(kernel, x=None, label=None,
     :param array-like x: the value to use for the other kernel argument (kernels are a function of two variables!)
     :param plot_limits: the range over which to plot the kernel
     :type plot_limits: Either (xmin, xmax) for 1D or (xmin, xmax, ymin, ymax) / ((xmin, xmax), (ymin, ymax)) for 2D
-    :param array-like visible_dims: input dimensions (!) to use for x. Make sure to select 2 or less dimensions to plot.
+    :param array-like visible_dims: files dimensions (!) to use for x. Make sure to select 2 or less dimensions to plot.
     :resolution: the resolution of the lines used in plotting. for 2D this defines the grid for kernel evaluation.
     :param {2d|3d} projection: What projection shall we use to plot the kernel?
     :param int levels: for 2D projection, how many levels for the contour plot to use?
@@ -140,4 +140,4 @@ def plot_covariance(kernel, x=None, label=None,
         return pl().add_to_canvas(canvas, plots)
 
     else:
-        raise NotImplementedError("Cannot plot a kernel with more than two input dimensions")
+        raise NotImplementedError("Cannot plot a kernel with more than two files dimensions")

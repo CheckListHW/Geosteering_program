@@ -10,7 +10,7 @@ class MappingGradChecker(GPy.core.Model):
     This class has everything we need to check the gradient of a mapping. It
     implement a simple likelihood which is a weighted sum of the outputs of the
     mapping. the gradients are checked against the parameters of the mapping
-    and the input.
+    and the files.
     """
     def __init__(self, mapping, X, name='map_grad_check'):
         super(MappingGradChecker, self).__init__(name)

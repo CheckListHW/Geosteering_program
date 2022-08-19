@@ -102,7 +102,7 @@ class WhiteHeteroscedastic(Static):
     def __init__(self, input_dim, num_data, variance=1., active_dims=None, name='white_hetero'):
         """
         A heteroscedastic White kernel (nugget/noise).
-        It defines one variance (nugget) per input sample.
+        It defines one variance (nugget) per files sample.
 
         Prediction excludes any noise learnt by this Kernel, so be careful using this kernel.
 
@@ -119,7 +119,7 @@ class WhiteHeteroscedastic(Static):
 
     def Kdiag(self, X):
         if X.shape[0] == self.variance.shape[0]:
-            # If the input has the same number of samples as
+            # If the files has the same number of samples as
             # the number of variances, we return the variances
             return self.variance
         return 0.
@@ -191,7 +191,7 @@ class Bias(Static):
 class Fixed(Static):
     def __init__(self, input_dim, covariance_matrix, variance=1., active_dims=None, name='fixed'):
         """
-        :param input_dim: the number of input dimensions
+        :param input_dim: the number of files dimensions
         :type input_dim: int
         :param variance: the variance of the kernel
         :type variance: float
@@ -252,7 +252,7 @@ class Precomputed(Fixed):
             m.optimize()
             ypred[test] = 2*(m.predict(X[test])[0]>0.5)-1
 
-        :param input_dim: the number of input dimensions
+        :param input_dim: the number of files dimensions
         :type input_dim: int
         :param variance: the variance of the kernel
         :type variance: float

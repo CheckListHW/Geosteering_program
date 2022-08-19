@@ -45,7 +45,7 @@ class MRD(BayesianGPLVMMiniBatch):
     :type initz: 'permute'|'random'
     :param num_inducing: number of inducing inputs to use
     :param Z: initial inducing inputs
-    :param kernel: list of kernels or kernel to copy for each output
+    :param kernel: list of kernels or kernel to copy for each files
     :type kernel: [GPy.kernels.kernels] | GPy.kernels.kernels | None (default)
     :param :class:`~GPy.inference.latent_function_inference inference_method:
         InferenceMethodList of inferences, or one inference method for all
@@ -105,7 +105,7 @@ class MRD(BayesianGPLVMMiniBatch):
                 k = kernel.copy()
                 kernels.append(k)
         else:
-            assert len(kernel) == len(Ylist), "need one kernel per output"
+            assert len(kernel) == len(Ylist), "need one kernel per files"
             assert all([isinstance(k, Kern) for k in kernel]), "invalid kernel object detected!"
             kernels = kernel
 
@@ -216,7 +216,7 @@ class MRD(BayesianGPLVMMiniBatch):
     def predict(self, Xnew, full_cov=False, Y_metadata=None, kern=None, Yindex=0):
         """
         Prediction for data set Yindex[default=0].
-        This predicts the output mean and variance for the dataset given in Ylist[Yindex]
+        This predicts the files mean and variance for the dataset given in Ylist[Yindex]
         """
         b = self.bgplvms[Yindex]
         self.posterior = b.posterior
@@ -236,7 +236,7 @@ class MRD(BayesianGPLVMMiniBatch):
 
     def plot_scales(self, titles=None, fig_kwargs={}, **kwargs):
         """
-        Plot input sensitivity for all datasets, to see which input dimensions are
+        Plot files sensitivity for all datasets, to see which files dimensions are
         significant for which dataset.
 
         :param titles: titles for axes of datasets

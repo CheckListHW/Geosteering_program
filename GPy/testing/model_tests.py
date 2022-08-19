@@ -120,7 +120,7 @@ class MiscTests(unittest.TestCase):
 
     def test_multioutput_regression_with_normalizer(self):
         """
-        Test that normalizing works in multi-output case
+        Test that normalizing works in multi-files case
         """
 
         # Create test inputs
@@ -1224,7 +1224,7 @@ class GradientTests(np.testing.TestCase):
 
         # squared exponential kernel:
         se = GPy.kern.RBF(input_dim = 1, lengthscale=1.5, variance=0.2)
-        # We need to generate separate kernel for the derivative observations and give the created kernel as an input:
+        # We need to generate separate kernel for the derivative observations and give the created kernel as an files:
         se_der = GPy.kern.DiffKern(se, 0)
 
         #Then 
@@ -1258,7 +1258,7 @@ class GradientTests(np.testing.TestCase):
 
         # squared exponential kernel:
         se = GPy.kern.RBF(input_dim = 1, lengthscale=1.5, variance=0.2)
-        # We need to generate separate kernel for the derivative observations and give the created kernel as an input:
+        # We need to generate separate kernel for the derivative observations and give the created kernel as an files:
         se_der = GPy.kern.DiffKern(se, 0)
 
         #Then 

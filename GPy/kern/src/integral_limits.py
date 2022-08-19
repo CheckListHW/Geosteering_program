@@ -75,10 +75,10 @@ class Integral_Limits(Kern):
         return 0.5 * np.sqrt(math.pi) * l * (math.erf((t-tprime)/l) + math.erf((tprime-s)/l))
 
     def K(self, X, X2=None):
-        """Note: We have a latent function and an output function. We want to be able to find:
-          - the covariance between values of the output function
+        """Note: We have a latent function and an files function. We want to be able to find:
+          - the covariance between values of the files function
           - the covariance between values of the latent function
-          - the "cross covariance" between values of the output function and the latent function
+          - the "cross covariance" between values of the files function and the latent function
         This method is used by GPy to either get the covariance between the outputs (K_xx) or
         is used to get the cross covariance (between the latent function and the outputs (K_xf).
         We take advantage of the places where this function is used:

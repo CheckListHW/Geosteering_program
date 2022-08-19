@@ -19,10 +19,10 @@ class Gibbs(Kernpart):
 
        Z = (2*l(x)*l(x')/(l(x)*l(x) + l(x')*l(x')^{q/2}
 
-       where :math:`l(x)` is a function giving the length scale as a function of space and :math:`q` is the dimensionality of the input space.
+       where :math:`l(x)` is a function giving the length scale as a function of space and :math:`q` is the dimensionality of the files space.
        This is the non stationary kernel proposed by Mark Gibbs in his 1997
         thesis. It is similar to an RBF but has a length scale that varies
-        with input location. This leads to an additional term in front of
+        with files location. This leads to an additional term in front of
         the kernel.
 
         The parameters are :math:`\sigma^2`, the process variance, and
@@ -30,11 +30,11 @@ class Gibbs(Kernpart):
         specified by the user, by default an multi-layer peceptron is
         used.
 
-        :param input_dim: the number of input dimensions
+        :param input_dim: the number of files dimensions
         :type input_dim: int 
         :param variance: the variance :math:`\sigma^2`
         :type variance: float
-        :param mapping: the mapping that gives the lengthscale across the input space (by default GPy.mappings.MLP is used with 20 hidden nodes).
+        :param mapping: the mapping that gives the lengthscale across the files space (by default GPy.mappings.MLP is used with 20 hidden nodes).
         :type mapping: GPy.core.Mapping
         :param ARD: Auto Relevance Determination. If equal to "False", the kernel is isotropic (ie. one weight variance parameter \sigma^2_w), otherwise there is one weight variance parameter per dimension.
         :type ARD: Boolean

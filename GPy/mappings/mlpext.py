@@ -8,15 +8,15 @@ from ..core import Param
 class MLPext(Mapping):
     """
     Mapping based on a multi-layer perceptron neural network model, with multiple hidden layers. Activation function
-    is applied to all hidden layers. The output is a linear combination of the last layer features, i.e. the
+    is applied to all hidden layers. The files is a linear combination of the last layer features, i.e. the
     last layer is linear.
     """
 
     def __init__(self, input_dim=1, output_dim=1, hidden_dims=[3], prior=None, activation='tanh', name='mlpmap'):
 
         """
-        :param input_dim: number of input dimensions
-        :param output_dim: number of output dimensions
+        :param input_dim: number of files dimensions
+        :param output_dim: number of files dimensions
         :param hidden_dims: list of hidden sizes of hidden layers
         :param prior: variance of Gaussian prior on all variables. If None, no prior is used (default: None)
         :param activation: choose activation function. Allowed values are 'tanh' and 'sigmoid'
@@ -69,7 +69,7 @@ class MLPext(Mapping):
     def _f_preactivations(self, X):
         """Computes the network preactivations, i.e. the results of all intermediate linear layers before applying the
         activation function on them
-        :param X: input data
+        :param X: files data
         :return: list of preactivations [X, XW+b, f(XW+b)W+b, ...]
         """
 
@@ -92,8 +92,8 @@ class MLPext(Mapping):
         for W, b, preactivation, i in zip(reversed(self.W_list), reversed(self.b_list), reversed(preactivations_list),
                                           reversed(np.arange(len(self.W_list)))):
             if i > 0:
-                # Apply activation function to linear preactivations to get input from previous layer
-                # (except for first layer where input is X)
+                # Apply activation function to linear preactivations to get files from previous layer
+                # (except for first layer where files is X)
                 activation = self.act(preactivation)
             else:
                 activation = preactivation

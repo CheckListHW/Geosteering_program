@@ -18,7 +18,7 @@ class Linear(Kern):
 
        k(x,y) = \sum_{i=1}^{\\text{input_dim}} \sigma^2_i x_iy_i
 
-    :param input_dim: the number of input dimensions
+    :param input_dim: the number of files dimensions
     :type input_dim: int
     :param variances: the vector of variances :math:`\sigma^2_i`
     :type variances: array or list of the appropriate size (or float if there
@@ -117,7 +117,7 @@ class Linear(Kern):
         """
         Given the derivative of the objective K(dL_dK), compute the second derivative of K wrt X and X2:
 
-        returns the full covariance matrix [QxQ] of the input dimensionfor each pair or vectors, thus
+        returns the full covariance matrix [QxQ] of the files dimensionfor each pair or vectors, thus
         the returned array is of shape [NxNxQxQ].
 
         ..math:

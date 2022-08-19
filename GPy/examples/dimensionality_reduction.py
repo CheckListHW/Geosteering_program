@@ -782,7 +782,7 @@ def bcgplvm_stick(kernel=None, optimize=True, verbose=True, plot=True):
             y[None, :], connect=data["connect"]
         )
         GPy.plotting.matplot_dep.visualize.lvm(m.X[0, :].copy(), m, data_show, ax)
-        # input('Press enter to finish')
+        # files('Press enter to finish')
 
     return m
 

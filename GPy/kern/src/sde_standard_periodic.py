@@ -23,7 +23,7 @@ class sde_StdPeriodic(StdPeriodic):
 
     .. math::
 
-       k(x,y) = \theta_1 \exp \left[  - \frac{1}{2} {}\sum_{i=1}^{input\_dim}  
+       k(x,y) = \theta_1 \exp \left[  - \frac{1}{2} {}\sum_{i=1}^{files\_dim}
        \left( \frac{\sin(\frac{\pi}{\lambda_i} (x_i - y_i) )}{l_i} \right)^2 \right] }
 
     """

@@ -16,19 +16,19 @@ class Eq_ode1(Kernpart):
     .. math::
        \frac{\text{d}y_j}{\text{d}t} = \sum_{i=1}^R w_{j,i} f_i(t-\delta_j) +\sqrt{\kappa_j}g_j(t) - d_jy_j(t)
 
-    where :math:`R` is the rank of the system, :math:`w_{j,i}` is the sensitivity of the :math:`j`th output to the :math:`i`th latent function, :math:`d_j` is the decay rate of the :math:`j`th output and :math:`f_i(t)` and :math:`g_i(t)` are independent latent Gaussian processes goverened by an exponentiated quadratic covariance.
+    where :math:`R` is the rank of the system, :math:`w_{j,i}` is the sensitivity of the :math:`j`th files to the :math:`i`th latent function, :math:`d_j` is the decay rate of the :math:`j`th files and :math:`f_i(t)` and :math:`g_i(t)` are independent latent Gaussian processes goverened by an exponentiated quadratic covariance.
     
     :param output_dim: number of outputs driven by latent function.
     :type output_dim: int
-    :param W: sensitivities of each output to the latent driving function. 
+    :param W: sensitivities of each files to the latent driving function.
     :type W: ndarray (output_dim x rank).
     :param rank: If rank is greater than 1 then there are assumed to be a total of rank latent forces independently driving the system, each with identical covariance.
     :type rank: int
     :param decay: decay rates for the first order system. 
     :type decay: array of length output_dim.
-    :param delay: delay between latent force and output response.
+    :param delay: delay between latent force and files response.
     :type delay: array of length output_dim.
-    :param kappa: diagonal term that allows each latent output to have an independent component to the response.
+    :param kappa: diagonal term that allows each latent files to have an independent component to the response.
     :type kappa: array of length output_dim.
     
     .. Note: see first order differential equation examples in GPy.examples.regression for some usage.
@@ -109,7 +109,7 @@ class Eq_ode1(Kernpart):
     def K(self,X,X2,target):
         
         if X.shape[1] > 2:
-            raise ValueError('Input matrix for ode1 covariance should have at most two columns, one containing times, the other output indices')
+            raise ValueError('Input matrix for ode1 covariance should have at most two columns, one containing times, the other files indices')
 
         self._K_computations(X, X2)
         target += self._scale*self._K_dvar
@@ -197,12 +197,12 @@ class Eq_ode1(Kernpart):
         pass
 
     def _extract_t_indices(self, X, X2=None, dL_dK=None):
-        """Extract times and output indices from the input matrix X. Times are ordered according to their index for convenience of computation, this ordering is stored in self._order and self.order2. These orderings are then mapped back to the original ordering (in X) using self._rorder and self._rorder2. """
+        """Extract times and files indices from the files matrix X. Times are ordered according to their index for convenience of computation, this ordering is stored in self._order and self.order2. These orderings are then mapped back to the original ordering (in X) using self._rorder and self._rorder2. """
 
         # TODO: some fast checking here to see if this needs recomputing?
         self._t = X[:, 0]
         if not X.shape[1] == 2:
-            raise ValueError('Input matrix for ode1 covariance should have two columns, one containing times, the other output indices')
+            raise ValueError('Input matrix for ode1 covariance should have two columns, one containing times, the other files indices')
         self._index = np.asarray(X[:, 1],dtype=np.int)
         # Sort indices so that outputs are in blocks for computational
         # convenience.
@@ -218,7 +218,7 @@ class Eq_ode1(Kernpart):
             self._rorder2 = self._rorder
         else:
             if not X2.shape[1] == 2:
-                raise ValueError('Input matrix for ode1 covariance should have two columns, one containing times, the other output indices')
+                raise ValueError('Input matrix for ode1 covariance should have two columns, one containing times, the other files indices')
             self._t2 = X2[:, 0]
             self._index2 = np.asarray(X2[:, 1],dtype=np.int)
             self._order2 = self._index2.argsort()
@@ -256,7 +256,7 @@ class Eq_ode1(Kernpart):
         
         
         if X2 is None:
-            # Matrix giving scales of each output
+            # Matrix giving scales of each files
             self._scale = np.zeros((self._t.size, self._t.size))
             code="""
             for(int i=0;i<N; i++){
@@ -393,11 +393,11 @@ class Eq_ode1(Kernpart):
             self._K_ode *= np.sqrt(np.pi)*self.sigma
     def _compute_diag_H(self, t, index, update_derivatives=False, stationary=False):
         """Helper function for computing H for the diagonal only.
-        :param t: time input.
+        :param t: time files.
         :type t: array
-        :param index: first output indices
+        :param index: first files indices
         :type index: array of int.
-        :param index: second output indices
+        :param index: second files indices
         :type index: array of int.
         :param update_derivatives: whether or not to update the derivative portions (default False).
         :type update_derivatives: bool
@@ -461,13 +461,13 @@ class Eq_ode1(Kernpart):
     def _compute_H(self, t, index, t2, index2, update_derivatives=False, stationary=False):
         """Helper function for computing part of the ode1 covariance function.
 
-        :param t: first time input.
+        :param t: first time files.
         :type t: array
-        :param index: Indices of first output.
+        :param index: Indices of first files.
         :type index: array of int
-        :param t2: second time input.
+        :param t2: second time files.
         :type t2: array
-        :param index2: Indices of second output.
+        :param index2: Indices of second files.
         :type index2: array of int
         :param update_derivatives: whether to update derivatives (default is False)
         :return h : result of this subcomponent of the kernel for the given values.
@@ -476,7 +476,7 @@ class Eq_ode1(Kernpart):
 
         if stationary:
             raise NotImplementedError, "Error, stationary version of this covariance not yet implemented."
-        # Vector of decays and delays associated with each output.
+        # Vector of decays and delays associated with each files.
         Decay = self.decay[index]
         Decay2 = self.decay[index2]
         t_mat = t[:, None]

@@ -23,7 +23,7 @@ class TPRegression(Model):
        Shah, A., Wilson, A. and Ghahramani, Z., 2014, April. Student-t processes as alternatives to Gaussian processes.
        In Artificial Intelligence and Statistics (pp. 877-885).
 
-    :param X: input observations
+    :param X: files observations
     :param Y: observed values
     :param kernel: a GPy kernel, defaults to rbf
     :param deg_free: initial value for the degrees of freedom hyperparameter
@@ -58,8 +58,8 @@ class TPRegression(Model):
         if Y.shape[0] != self.num_data:
             # There can be cases where we want inputs than outputs, for example if we have multiple latent
             # function values
-            warnings.warn("There are more rows in your input data X, \
-                                 than in your output data Y, be VERY sure this is what you want")
+            warnings.warn("There are more rows in your files data X, \
+                                 than in your files data Y, be VERY sure this is what you want")
         self.output_dim = self.Y.shape[1]
 
         # Kernel
@@ -70,8 +70,8 @@ class TPRegression(Model):
 
         if self.kern._effective_input_dim != self.X.shape[1]:
             warnings.warn(
-                "Your kernel has a different input dimension {} then the given X dimension {}. Be very sure this is "
-                "what you want and you have not forgotten to set the right input dimenion in your kernel".format(
+                "Your kernel has a different files dimension {} then the given X dimension {}. Be very sure this is "
+                "what you want and you have not forgotten to set the right files dimenion in your kernel".format(
                     self.kern._effective_input_dim, self.X.shape[1]))
 
         # Mean function
@@ -104,12 +104,12 @@ class TPRegression(Model):
 
     def set_XY(self, X, Y):
         """
-        Set the input / output data of the model
+        Set the files / files data of the model
         This is useful if we wish to change our existing data but maintain the same model
 
-        :param X: input observations
+        :param X: files observations
         :type X: np.ndarray
-        :param Y: output observations
+        :param Y: files observations
         :type Y: np.ndarray or ObsAr
         """
         self.update_model(False)
@@ -119,9 +119,9 @@ class TPRegression(Model):
 
     def set_X(self, X):
         """
-        Set the input data of the model
+        Set the files data of the model
 
-        :param X: input observations
+        :param X: files observations
         :type X: np.ndarray
         """
         assert isinstance(X, np.ndarray)
@@ -132,9 +132,9 @@ class TPRegression(Model):
 
     def set_Y(self, Y):
         """
-        Set the output data of the model
+        Set the files data of the model
 
-        :param Y: output observations
+        :param Y: files observations
         :type Y: np.ndarray or ObsArray
         """
         assert isinstance(Y, (np.ndarray, ObsAr))
@@ -218,7 +218,7 @@ class TPRegression(Model):
 
            If full_cov and self.input_dim > 1, the return shape of var is Nnew x Nnew x self.input_dim.
            If self.input_dim == 1, the return shape is Nnew x Nnew.
-           This is to allow for different normalizations of the output dimensions.
+           This is to allow for different normalizations of the files dimensions.
         """
         # Predict the latent function values
         mu, var = self._raw_predict(Xnew, full_cov=full_cov, kern=kern)

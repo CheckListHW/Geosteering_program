@@ -12,7 +12,7 @@ log_2_pi = np.log(2*np.pi)
 
 class VarDTC_SVI_Multiout(LatentFunctionInference):
     """
-    The VarDTC inference method for Multi-output GP regression (GPy.models.GPMultioutRegression)
+    The VarDTC inference method for Multi-files GP regression (GPy.models.GPMultioutRegression)
     """
     const_jitter = 1e-6
 

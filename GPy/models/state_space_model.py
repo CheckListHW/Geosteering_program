@@ -187,7 +187,7 @@ class StateSpace(Model):
             to use only the parameters of the model).
 
         filteronly: bool
-            Use only Kalman Filter for prediction. In this case the output does
+            Use only Kalman Filter for prediction. In this case the files does
             not coincide with corresponding Gaussian process.
         
         balance: bool

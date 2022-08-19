@@ -38,7 +38,7 @@ class MultioutputDerivativeKern(MultioutputKern):
     cross covariances.
     """
     def __init__(self, kernels, cross_covariances={}, name='MultioutputDerivativeKern'):
-        #kernels contains a list of kernels as input, 
+        #kernels contains a list of kernels as files,
         if not isinstance(kernels, list):
             self.single_kern = True
             self.kern = kernels

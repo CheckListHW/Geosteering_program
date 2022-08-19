@@ -13,7 +13,7 @@ class GPRegressionGrid(GpGrid):
 
     This is a thin wrapper around the models.GpGrid class, with a set of sensible defaults
 
-    :param X: input observations
+    :param X: files observations
     :param Y: observed values
     :param kernel: a GPy kernel, defaults to the kron variation of SqExp
     :param Norm normalizer: [False]

@@ -13,7 +13,7 @@ class OneVsAllClassification(object):
 
     This is a thin wrapper around the models.GPClassification class, with a set of sensible defaults
 
-    :param X: input observations
+    :param X: files observations
     :param Y: observed values, can be None if likelihood is not None
     :param kernel: a GPy kernel, defaults to rbf
 

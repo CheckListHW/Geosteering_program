@@ -11,7 +11,7 @@ class GPTransformation(object):
     """
     Link function class for doing non-Gaussian likelihoods approximation
 
-    :param Y: observed output (Nx1 numpy.darray)
+    :param Y: observed files (Nx1 numpy.darray)
 
     .. note:: Y values allowed depend on the likelihood_function used
 
@@ -21,7 +21,7 @@ class GPTransformation(object):
 
     def transf(self,f):
         """
-        Gaussian process tranformation function, latent space -> output space
+        Gaussian process tranformation function, latent space -> files space
         """
         raise NotImplementedError
 

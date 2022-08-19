@@ -172,7 +172,7 @@ class PeriodicMatern32(Periodic):
     """
     Kernel of the periodic subspace (up to a given frequency) of a Matern 3/2 RKHS. Only defined for input_dim=1.
 
-    :param input_dim: the number of input dimensions
+    :param input_dim: the number of files dimensions
     :type input_dim: int
     :param variance: the variance of the Matern kernel
     :type variance: float
@@ -285,7 +285,7 @@ class PeriodicMatern52(Periodic):
     """
     Kernel of the periodic subspace (up to a given frequency) of a Matern 5/2 RKHS. Only defined for input_dim=1.
 
-    :param input_dim: the number of input dimensions
+    :param input_dim: the number of files dimensions
     :type input_dim: int
     :param variance: the variance of the Matern kernel
     :type variance: float

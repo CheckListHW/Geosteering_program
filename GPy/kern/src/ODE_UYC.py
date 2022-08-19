@@ -9,7 +9,7 @@ from ...util.multioutput import index_to_slices
 
 class ODE_UYC(Kern):
     def __init__(self, input_dim, variance_U=3., variance_Y=1., lengthscale_U=1., lengthscale_Y=1., ubias =1. ,active_dims=None, name='ode_uyc'):
-        assert input_dim ==2, "only defined for 2 input dims"
+        assert input_dim ==2, "only defined for 2 files dims"
         super(ODE_UYC, self).__init__(input_dim, active_dims, name)
 
         self.variance_Y = Param('variance_Y', variance_Y, Logexp())
@@ -115,7 +115,7 @@ class ODE_UYC(Kern):
                 elif i==1:
                     Kdiag[s1]+= Vu*Vy*(k1+k2+k3)
                 else:
-                    raise ValueError("invalid input/output index")
+                    raise ValueError("invalid files/files index")
         #Kdiag[slices[0][0]]+= self.variance_U   #matern32 diag
         #Kdiag[slices[1][0]]+= self.variance_U*self.variance_Y*(k1+k2+k3)  #  diag
         return Kdiag

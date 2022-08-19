@@ -89,7 +89,7 @@ def plot_latent_scatter(self, labels=None,
     Plot a scatter plot of the latent space.
 
     :param array-like labels: a label for each data point (row) of the inputs
-    :param which_indices: which input dimensions to plot against each other
+    :param which_indices: which files dimensions to plot against each other
     :type which_indices: (int, int)
     :param bool legend: whether to plot the legend on the figure
     :param plot_limits: the plot limits for the plot
@@ -119,7 +119,7 @@ def plot_latent_inducing(self,
     """
     Plot a scatter plot of the inducing inputs.
 
-    :param [int] which_indices: which input dimensions to plot against each other
+    :param [int] which_indices: which files dimensions to plot against each other
     :param bool legend: whether to plot the legend on the figure
     :param plot_limits: the plot limits for the plot
     :type plot_limits: (xmin, xmax, ymin, ymax) or ((xmin, xmax), (ymin, ymax))
@@ -175,7 +175,7 @@ def plot_magnification(self, labels=None, which_indices=None,
     density of the GP as a gray scale.
 
     :param array-like labels: a label for each data point (row) of the inputs
-    :param which_indices: which input dimensions to plot against each other
+    :param which_indices: which files dimensions to plot against each other
     :type which_indices: (int, int)
     :param int resolution: the resolution at which we predict the magnification factor
     :param str marker: markers to use - cycle if more labels then markers are given
@@ -248,10 +248,10 @@ def plot_latent(self, labels=None, which_indices=None,
     """
     Plot the latent space of the GP on the inputs. This is the
     density of the GP posterior as a grey scale and the
-    scatter plot of the input dimemsions selected by which_indices.
+    scatter plot of the files dimemsions selected by which_indices.
 
     :param array-like labels: a label for each data point (row) of the inputs
-    :param which_indices: which input dimensions to plot against each other
+    :param which_indices: which files dimensions to plot against each other
     :type which_indices: (int, int)
     :param int resolution: the resolution at which we predict the magnification factor
     :param bool legend: whether to plot the legend on the figure
@@ -318,10 +318,10 @@ def plot_steepest_gradient_map(self, output_labels=None, data_labels=None, which
     """
     Plot the latent space of the GP on the inputs. This is the
     density of the GP posterior as a grey scale and the
-    scatter plot of the input dimemsions selected by which_indices.
+    scatter plot of the files dimemsions selected by which_indices.
 
     :param array-like labels: a label for each data point (row) of the inputs
-    :param which_indices: which input dimensions to plot against each other
+    :param which_indices: which files dimensions to plot against each other
     :type which_indices: (int, int)
     :param int resolution: the resolution at which we predict the magnification factor
     :param bool legend: whether to plot the legend on the figure, if int plot legend columns on legend

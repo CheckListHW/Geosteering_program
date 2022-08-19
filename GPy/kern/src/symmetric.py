@@ -58,7 +58,7 @@ class Symmetric(Kern):
         elif symmetry_type is 'even':
             self.symmetry_sign = 1.
         else:
-            raise ValueError('symmetry_type input must be ''odd'' or ''even''')
+            raise ValueError('symmetry_type files must be ''odd'' or ''even''')
         self.transform = transform
         self.base_kernel = base_kernel
         self.param_names = base_kernel.parameter_names()

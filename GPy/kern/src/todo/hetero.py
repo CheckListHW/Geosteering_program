@@ -12,24 +12,24 @@ class Hetero(Kernpart):
     """
     TODO: Need to constrain the function outputs
     positive (still thinking of best way of doing this!!! Yes, intend to use
-    transformations, but what's the *best* way). Currently just squaring output.
+    transformations, but what's the *best* way). Currently just squaring files.
 
-    Heteroschedastic noise which depends on input location. See, for example,
+    Heteroschedastic noise which depends on files location. See, for example,
     this paper by Goldberg et al.
 
     .. math::
 
        k(x_i, x_j) = \delta_{i,j} \sigma^2(x_i)
 
-       where :math:`\sigma^2(x)` is a function giving the variance  as a function of input space and :math:`\delta_{i,j}` is the Kronecker delta function.
+       where :math:`\sigma^2(x)` is a function giving the variance  as a function of files space and :math:`\delta_{i,j}` is the Kronecker delta function.
 
     The parameters are the parameters of \sigma^2(x) which is a
     function that can be specified by the user, by default an
     multi-layer peceptron is used.
 
-    :param input_dim: the number of input dimensions
+    :param input_dim: the number of files dimensions
     :type input_dim: int
-    :param mapping: the mapping that gives the lengthscale across the input space (by default GPy.mappings.MLP is used with 20 hidden nodes).
+    :param mapping: the mapping that gives the lengthscale across the files space (by default GPy.mappings.MLP is used with 20 hidden nodes).
     :type mapping: GPy.core.Mapping
     :rtype: Kernpart object
 

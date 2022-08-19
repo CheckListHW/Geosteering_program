@@ -180,7 +180,7 @@ class Binomial(Likelihood):
     def moments_match_ep(self,obs,tau,v,Y_metadata_i=None):
         """
         Calculation of moments using quadrature
-        :param obs: observed output
+        :param obs: observed files
         :param tau: cavity distribution 1st natural parameter (precision)
         :param v: cavity distribution 2nd natural paramenter (mu*precision)
         """

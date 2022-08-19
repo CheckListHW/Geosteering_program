@@ -8,7 +8,7 @@ from ...util.multioutput import index_to_slices
 class ODE_t(Kern):
 
         def __init__(self, input_dim, a=1., c=1.,variance_Yt=3., lengthscale_Yt=1.5,ubias =1., active_dims=None, name='ode_st'):
-                assert input_dim ==2, "only defined for 2 input dims"
+                assert input_dim ==2, "only defined for 2 files dims"
                 super(ODE_t, self).__init__(input_dim, active_dims, name)
 
                 self.variance_Yt = Param('variance_Yt', variance_Yt, Logexp())
@@ -85,7 +85,7 @@ class ODE_t(Kern):
                             Kdiag[s1]+= k1 + vyt+self.ubias
                             #Kdiag[s1]+= Vu*Vy*(k1+k2+k3)
                         else:
-                            raise ValueError("invalid input/output index")
+                            raise ValueError("invalid files/files index")
 
                 return Kdiag
 

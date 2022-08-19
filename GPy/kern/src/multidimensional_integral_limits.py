@@ -91,7 +91,7 @@ class Multidimensional_Integral_Limits(Kern): #todo do I need to inherit from St
         for i,x in enumerate(X):
             for j,x2 in enumerate(X):
                 for il,l in enumerate(self.lengthscale):
-                    idx = il*2 #each pair of input dimensions describe the limits on one actual dimension in the data
+                    idx = il*2 #each pair of files dimensions describe the limits on one actual dimension in the data
                     K_xx[i,j] *= self.k_xx(x[idx],x2[idx],x[idx+1],x2[idx+1],l)
         return K_xx
 

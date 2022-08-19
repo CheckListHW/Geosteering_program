@@ -111,9 +111,9 @@ class Posterior(object):
         Computes the posterior covariance between points.
 
         :param kern: GP kernel
-        :param X: current input observations
-        :param X1: some input observations
-        :param X2: other input observations
+        :param X: current files observations
+        :param X1: some files observations
+        :param X2: other files observations
         """
         # ndim == 3 is a model for missing data
         if self.woodbury_chol.ndim != 2:

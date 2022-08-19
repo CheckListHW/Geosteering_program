@@ -16,11 +16,11 @@ class EQ_ODE2(Kern):
     .. math::
        \frac{\text{d}^2y_j(t)}{\text{d}^2t} + C_j\frac{\text{d}y_j(t)}{\text{d}t} + B_jy_j(t) = \sum_{i=1}^R w_{j,i} u_i(t)
 
-    where :math:`R` is the rank of the system, :math:`w_{j,i}` is the sensitivity of the :math:`j`th output to the :math:`i`th latent function, :math:`d_j` is the decay rate of the :math:`j`th output and :math:`f_i(t)` and :math:`g_i(t)` are independent latent Gaussian processes goverened by an exponentiated quadratic covariance.
+    where :math:`R` is the rank of the system, :math:`w_{j,i}` is the sensitivity of the :math:`j`th files to the :math:`i`th latent function, :math:`d_j` is the decay rate of the :math:`j`th files and :math:`f_i(t)` and :math:`g_i(t)` are independent latent Gaussian processes goverened by an exponentiated quadratic covariance.
 
     :param output_dim: number of outputs driven by latent function.
     :type output_dim: int
-    :param W: sensitivities of each output to the latent driving function.
+    :param W: sensitivities of each files to the latent driving function.
     :type W: ndarray (output_dim x rank).
     :param rank: If rank is greater than 1 then there are assumed to be a total of rank latent forces independently driving the system, each with identical covariance.
     :type rank: int
@@ -33,7 +33,7 @@ class EQ_ODE2(Kern):
     #This code will only work for the sparseGP model, due to limitations in models for this kernel
     def __init__(self, input_dim=2, output_dim=1, rank=1, W=None, lengthscale=None, C=None, B=None, active_dims=None, name='eq_ode2'):
         #input_dim should be 1, but kern._slice_X is not returning index information required to evaluate kernels        
-        assert input_dim == 2, "only defined for 1 input dims"
+        assert input_dim == 2, "only defined for 1 files dims"
         super(EQ_ODE2, self).__init__(input_dim=input_dim, active_dims=active_dims, name=name)
         self.rank = rank
         self.output_dim = output_dim

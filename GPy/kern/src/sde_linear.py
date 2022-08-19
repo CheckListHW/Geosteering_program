@@ -19,7 +19,7 @@ class sde_Linear(Linear):
 
     .. math::
 
-       k(x,y) = \sum_{i=1}^{input dim} \sigma^2_i x_iy_i
+       k(x,y) = \sum_{i=1}^{files dim} \sigma^2_i x_iy_i
 
     """
     def __init__(self, input_dim, X, variances=None, ARD=False, active_dims=None, name='linear'):

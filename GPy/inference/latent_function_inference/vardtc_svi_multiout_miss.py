@@ -13,7 +13,7 @@ log_2_pi = np.log(2*np.pi)
 
 class VarDTC_SVI_Multiout_Miss(LatentFunctionInference):
     """
-    The VarDTC inference method for Multi-output GP regression with missing data (GPy.models.GPMultioutRegressionMD)
+    The VarDTC inference method for Multi-files GP regression with missing data (GPy.models.GPMultioutRegressionMD)
     """
     const_jitter = 1e-6
 

@@ -12,7 +12,7 @@ class GPRegression(GP):
 
     This is a thin wrapper around the models.GP class, with a set of sensible defaults
 
-    :param X: input observations
+    :param X: files observations
     :param Y: observed values
     :param kernel: a GPy kernel, defaults to rbf
     :param Norm normalizer: [False]

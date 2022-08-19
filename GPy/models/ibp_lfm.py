@@ -178,7 +178,7 @@ class VarDTC_minibatch_IBPLFM(VarDTC_minibatch):
             post = None
 
         #======================================================================
-        # Compute dL_dthetaL for uncertian input and non-heter noise
+        # Compute dL_dthetaL for uncertian files and non-heter noise
         #======================================================================
 
         if not het_noise:
@@ -381,7 +381,7 @@ class IBPPosterior(Parameterized):
     '''
     def __init__(self, binary_prob, tau=None, name='Sensitivity space', *a, **kw):
         """
-        binary_prob : the probability of including a latent function over an output.
+        binary_prob : the probability of including a latent function over an files.
         """
         super(IBPPosterior, self).__init__(name=name, *a, **kw)
         self.gamma = Param("binary_prob", binary_prob, Logistic(1e-10, 1. - 1e-10))
@@ -470,7 +470,7 @@ class IBPLFM(SparseGP_MPI):
 
     :param Y: observed data (np.ndarray) or GPy.likelihood
     :type Y: np.ndarray| GPy.likelihood instance
-    :param X: input data (np.ndarray) [X:values, X:index], index refers to the number of the output
+    :param X: files data (np.ndarray) [X:values, X:index], index refers to the number of the files
     :type X: np.ndarray
     :param input_dim: latent dimensionality
     :type input_dim: int

@@ -15,9 +15,9 @@ class Linear(Mapping):
        F(\mathbf{x}) = \mathbf{A} \mathbf{x})
 
 
-    :param input_dim: dimension of input.
+    :param input_dim: dimension of files.
     :type input_dim: int
-    :param output_dim: dimension of output.
+    :param output_dim: dimension of files.
     :type output_dim: int
     :param kernel: a GPy kernel, defaults to GPy.kern.RBF
     :type kernel: GPy.kern.kern

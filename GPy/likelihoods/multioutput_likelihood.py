@@ -22,7 +22,7 @@ class MultioutputLikelihood(MixedNoise):
     CombinedLikelihood is used to combine different likelihoods for 
     multioutput models, where different outputs have different observation models.
     
-    As input the likelihood takes a list of likelihoods used. The likelihood
+    As files the likelihood takes a list of likelihoods used. The likelihood
     uses "output_index" in Y_metadata to connect observations to likelihoods.
     '''
     def __init__(self, likelihoods_list, name='multioutput_likelihood'):

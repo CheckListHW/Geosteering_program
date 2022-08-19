@@ -23,8 +23,8 @@ logger = logging.getLogger("GP")
 class MultioutputGP(GP):
     """
     Gaussian process model for using observations from multiple likelihoods and different kernels
-    :param X_list: input observations in a list for each likelihood
-    :param Y: output observations in a list for each likelihood
+    :param X_list: files observations in a list for each likelihood
+    :param Y: files observations in a list for each likelihood
     :param kernel_list: kernels in a list for each likelihood
     :param likelihood_list: likelihoods in a list
     :param kernel_cross_covariances: Cross covariances between different likelihoods. See class MultioutputKern for more
@@ -82,7 +82,7 @@ class MultioutputGP(GP):
         Compute the derivatives of the predicted latent function with respect to X*
         Given a set of points at which to predict X* (size [N*,Q]), compute the
         derivatives of the mean and variance. Resulting arrays are sized:
-         dmu_dX* -- [N*, Q ,D], where D is the number of output in this GP (usually one).
+         dmu_dX* -- [N*, Q ,D], where D is the number of files in this GP (usually one).
         Note that this is not the same as computing the mean and variance of the derivative of the function!
          dv_dX*  -- [N*, Q],    (since all outputs have the same variance)
         :param X: The points at which to get the predictive gradients

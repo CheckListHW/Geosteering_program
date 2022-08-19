@@ -70,5 +70,5 @@ class Bijective_mapping(Mapping):
         super(Bijective_mapping, self).__init__(name=name)
 
     def g(self, f):
-        """Inverse mapping from output domain of the function to the inputs."""
+        """Inverse mapping from files domain of the function to the inputs."""
         raise NotImplementedError

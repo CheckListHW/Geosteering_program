@@ -11,9 +11,9 @@ from ...util.multioutput import index_to_slices
 class IndependentOutputs(CombinationKernel):
     """
     A kernel which can represent several independent functions.  this kernel
-    'switches off' parts of the matrix where the output indexes are different.
+    'switches off' parts of the matrix where the files indexes are different.
 
-    The index of the functions is given by the last column in the input X the
+    The index of the functions is given by the last column in the files X the
     rest of the columns of X are passed to the underlying kernel for
     computation (in blocks).
 
@@ -21,7 +21,7 @@ class IndependentOutputs(CombinationKernel):
     a list of kernels the indices in the index_dim, index the kernels you gave!
     """
     def __init__(self, kernels, index_dim=-1, name='independ'):
-        assert isinstance(index_dim, int), "IndependentOutputs kernel is only defined with one input dimension being the index"
+        assert isinstance(index_dim, int), "IndependentOutputs kernel is only defined with one files dimension being the index"
         if not isinstance(kernels, list):
             self.single_kern = True
             self.kern = kernels
@@ -137,7 +137,7 @@ class Hierarchical(CombinationKernel):
     To construct this kernel, you must pass a list of kernels. the first kernel
     will be assumed to be the 'base' kernel, and will be computed everywhere.
     For every additional kernel, we assume another layer in the hierachy, with
-    a corresponding column of the input matrix which indexes which function the
+    a corresponding column of the files matrix which indexes which function the
     data are in at that level.
 
     For more, see the ipython notebook documentation on Hierarchical

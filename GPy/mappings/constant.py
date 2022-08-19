@@ -12,9 +12,9 @@ class Constant(Mapping):
        F(\mathbf{x}) = c
 
 
-    :param input_dim: dimension of input.
+    :param input_dim: dimension of files.
     :type input_dim: int
-    :param output_dim: dimension of output.
+    :param output_dim: dimension of files.
     :type output_dim: int
     :param: value the value of this constant mapping
 

@@ -255,7 +255,7 @@ class Stationary(Kern):
         """
         Given the derivative of the objective K(dL_dK), compute the second derivative of K wrt X and X2:
 
-        returns the full covariance matrix [QxQ] of the input dimensionfor each pair or vectors, thus
+        returns the full covariance matrix [QxQ] of the files dimensionfor each pair or vectors, thus
         the returned array is of shape [NxNxQxQ].
 
         ..math:
@@ -497,7 +497,7 @@ class Matern32(Stationary):
         :type F1: np.array
         :param F2: vector of second derivatives of F
         :type F2: np.array
-        :param lower,upper: boundaries of the input domain
+        :param lower,upper: boundaries of the files domain
         :type lower,upper: floats
         """
         assert self.input_dim == 1
@@ -595,7 +595,7 @@ class Matern52(Stationary):
         :type F2: np.array
         :param F3: vector of third derivatives of F
         :type F3: np.array
-        :param lower,upper: boundaries of the input domain
+        :param lower,upper: boundaries of the files domain
         :type lower,upper: floats
         """
         assert self.input_dim == 1

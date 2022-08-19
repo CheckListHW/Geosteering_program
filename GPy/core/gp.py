@@ -19,8 +19,8 @@ class GP(Model):
     """
     General purpose Gaussian process model
 
-    :param X: input observations
-    :param Y: output observations
+    :param X: files observations
+    :param Y: files observations
     :param kernel: a GPy kernel
     :param likelihood: a GPy likelihood
     :param inference_method: The :class:`~GPy.inference.latent_function_inference.LatentFunctionInference` inference method to use for this GP
@@ -67,8 +67,8 @@ class GP(Model):
         if Y.shape[0] != self.num_data:
             #There can be cases where we want inputs than outputs, for example if we have multiple latent
             #function values
-            warnings.warn("There are more rows in your input data X, \
-                         than in your output data Y, be VERY sure this is what you want")
+            warnings.warn("There are more rows in your files data X, \
+                         than in your files data Y, be VERY sure this is what you want")
         _, self.output_dim = self.Y.shape
 
         assert ((Y_metadata is None) or isinstance(Y_metadata, dict))
@@ -82,7 +82,7 @@ class GP(Model):
         self.likelihood = likelihood
 
         if self.kern._effective_input_dim != self.X.shape[1]:
-            warnings.warn("Your kernel has a different input dimension {} then the given X dimension {}. Be very sure this is what you want and you have not forgotten to set the right input dimenion in your kernel".format(self.kern._effective_input_dim, self.X.shape[1]))
+            warnings.warn("Your kernel has a different files dimension {} then the given X dimension {}. Be very sure this is what you want and you have not forgotten to set the right files dimenion in your kernel".format(self.kern._effective_input_dim, self.X.shape[1]))
 
         #handle the mean function
         self.mean_function = mean_function
@@ -188,7 +188,7 @@ class GP(Model):
     # The predictive variable to be used to predict using the posterior object's
     # woodbury_vector and woodbury_inv is defined as predictive_variable
     # as long as the posterior has the right woodbury entries.
-    # It is the input variable used for the covariance between
+    # It is the files variable used for the covariance between
     # X_star and the posterior of the GP.
     # This is usually just a link to self.X (full GP) or self.Z (sparse GP).
     # Make sure to name this variable and the predict functions will "just work"
@@ -211,12 +211,12 @@ class GP(Model):
 
     def set_XY(self, X=None, Y=None):
         """
-        Set the input / output data of the model
+        Set the files / files data of the model
         This is useful if we wish to change our existing data but maintain the same model
 
-        :param X: input observations
+        :param X: files observations
         :type X: np.ndarray
-        :param Y: output observations
+        :param Y: files observations
         :type Y: np.ndarray
         """
         self.update_model(False)
@@ -250,18 +250,18 @@ class GP(Model):
 
     def set_X(self,X):
         """
-        Set the input data of the model
+        Set the files data of the model
 
-        :param X: input observations
+        :param X: files observations
         :type X: np.ndarray
         """
         self.set_XY(X=X)
 
     def set_Y(self,Y):
         """
-        Set the output data of the model
+        Set the files data of the model
 
-        :param X: output observations
+        :param X: files observations
         :type X: np.ndarray
         """
         self.set_XY(Y=Y)
@@ -336,7 +336,7 @@ class GP(Model):
             If full_cov and self.input_dim > 1, the return shape of var is
             Nnew x Nnew x self.input_dim. If self.input_dim == 1, the return
             shape is Nnew x Nnew. This is to allow for different normalizations
-            of the output dimensions.
+            of the files dimensions.
 
         Note: If you want the predictive quantiles (e.g. 95% confidence
         interval) use :py:func:`~GPy.core.gp.GP.predict_quantiles`.
@@ -386,7 +386,7 @@ class GP(Model):
             var: posterior variance, a Numpy array, Nnew x 1 if full_cov=False, Nnew x Nnew otherwise
 
            If full_cov and self.input_dim > 1, the return shape of var is Nnew x Nnew x self.input_dim. If self.input_dim == 1, the return shape is Nnew x Nnew.
-           This is to allow for different normalizations of the output dimensions.
+           This is to allow for different normalizations of the files dimensions.
 
         Note: If you want the predictive quantiles (e.g. 95% confidence interval) use :py:func:`~GPy.core.gp.GP.predict_quantiles`.
         """
@@ -422,7 +422,7 @@ class GP(Model):
 
         Given a set of points at which to predict X* (size [N*,Q]), compute the
         derivatives of the mean and variance. Resulting arrays are sized:
-            dmu_dX* -- [N*, Q ,D], where D is the number of output in this GP
+            dmu_dX* -- [N*, Q ,D], where D is the number of files in this GP
             (usually one).
 
         Note that this is not the same as computing the mean and variance of
@@ -480,13 +480,13 @@ class GP(Model):
         Given a set of points at which to predict X* (size [N*,Q]), compute the
         mean and variance of the derivative. Resulting arrays are sized:
 
-         dL_dX* -- [N*, Q ,D], where D is the number of output in this GP (usually one).
+         dL_dX* -- [N*, Q ,D], where D is the number of files in this GP (usually one).
           Note that this is the mean and variance of the derivative,
           not the derivative of the mean and variance! (See predictive_gradients for that)
 
          dv_dX*  -- [N*, Q],    (since all outputs have the same variance)
           If there is missing data, it is not implemented for now, but
-          there will be one output variance per output dimension.
+          there will be one files variance per files dimension.
 
         :param X: The points at which to get the predictive gradients.
         :type X: np.ndarray (Xnew x self.input_dim)
@@ -541,14 +541,14 @@ class GP(Model):
     def predict_wishart_embedding(self, Xnew, kern=None, mean=True, covariance=True):
         """
         Predict the wishart embedding G of the GP. This is the density of the
-        input of the GP defined by the probabilistic function mapping f.
+        files of the GP defined by the probabilistic function mapping f.
         G = J_mean.T*J_mean + output_dim*J_cov.
 
         :param array-like Xnew: The points at which to evaluate the magnification.
         :param :py:class:`~GPy.kern.Kern` kern: The kernel to use for the magnification.
 
         Supplying only a part of the learning kernel gives insights into the density
-        of the specific kernel part of the input function. E.g. one can see how dense the
+        of the specific kernel part of the files function. E.g. one can see how dense the
         linear part of a kernel is compared to the non-linear part etc.
         """
         if kern is None:
@@ -583,7 +583,7 @@ class GP(Model):
 
         :param bool mean: whether to include the mean of the wishart embedding.
         :param bool covariance: whether to include the covariance of the wishart embedding.
-        :param array-like dimensions: which dimensions of the input space to use [defaults to self.get_most_significant_input_dimensions()[:2]]
+        :param array-like dimensions: which dimensions of the files space to use [defaults to self.get_most_significant_input_dimensions()[:2]]
         """
         G = self.predict_wishart_embedding(Xnew, kern, mean, covariance)
         if dimensions is None:
@@ -737,8 +737,8 @@ class GP(Model):
         Computes the posterior covariance between points. Does not account for 
         normalization or likelihood
 
-        :param X1: some input observations
-        :param X2: other input observations
+        :param X1: some files observations
+        :param X2: other files observations
 
         :returns: 
             cov: raw posterior covariance: k(X1,X2) - k(X1,X) G^{-1} K(X,X2)
@@ -754,8 +754,8 @@ class GP(Model):
         variance as well as normalization so that evaluation at (x,x) is consistent 
         with model.predict
 
-        :param X1: some input observations
-        :param X2: other input observations
+        :param X1: some files observations
+        :param X2: other files observations
         :param Y_metadata: metadata about the predicting point to pass to the
                            likelihood
         :param include_likelihood: Whether or not to add likelihood noise to

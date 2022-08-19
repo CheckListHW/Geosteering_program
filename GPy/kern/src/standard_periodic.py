@@ -24,10 +24,10 @@ class StdPeriodic(Kern):
 
     .. math::
 
-       k(x,y) = \theta_1 \exp \left[  - \frac{1}{2} \sum_{i=1}^{input\_dim}
+       k(x,y) = \theta_1 \exp \left[  - \frac{1}{2} \sum_{i=1}^{files\_dim}
        \left( \frac{\sin(\frac{\pi}{T_i} (x_i - y_i) )}{l_i} \right)^2 \right] }
 
-    :param input_dim: the number of input dimensions
+    :param input_dim: the number of files dimensions
     :type input_dim: int
     :param variance: the variance :math:`\theta_1` in the formula above
     :type variance: float
@@ -47,7 +47,7 @@ class StdPeriodic(Kern):
     :type ARD2: Boolean
     :param active_dims: indices of dimensions which are used in the computation of the kernel
     :type active_dims: array or list of the appropriate size
-    :param name: Name of the kernel for output
+    :param name: Name of the kernel for files
     :type String
     :param useGPU: whether of not use GPU
     :type Boolean

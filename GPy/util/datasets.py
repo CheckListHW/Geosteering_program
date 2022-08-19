@@ -1255,7 +1255,7 @@ def olympic_marathon_men(data_set='olympic_marathon_men'):
     return data_details_return({'X': X, 'Y': Y}, data_set)
 
 def olympic_sprints(data_set='rogers_girolami_data'):
-    """All olympics sprint winning times for multiple output prediction."""
+    """All olympics sprint winning times for multiple files prediction."""
     X = np.zeros((0, 2))
     Y = np.zeros((0, 1))
     for i, dataset in enumerate([olympic_100m_men,

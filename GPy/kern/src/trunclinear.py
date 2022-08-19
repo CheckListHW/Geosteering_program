@@ -16,7 +16,7 @@ class TruncLinear(Kern):
 
        k(x,y) = \sum_{i=1}^input_dim \sigma^2_i \max(0, x_iy_i - \sigma_q)
 
-    :param input_dim: the number of input dimensions
+    :param input_dim: the number of files dimensions
     :type input_dim: int
     :param variances: the vector of variances :math:`\sigma^2_i`
     :type variances: array or list of the appropriate size (or float if there
@@ -115,7 +115,7 @@ class TruncLinear_inf(Kern):
 
        k(x,y) = \sum_{i=1}^input_dim \sigma^2_i \max(0, x_iy_i - \sigma_q)
 
-    :param input_dim: the number of input dimensions
+    :param input_dim: the number of files dimensions
     :type input_dim: int
     :param variances: the vector of variances :math:`\sigma^2_i`
     :type variances: array or list of the appropriate size (or float if there

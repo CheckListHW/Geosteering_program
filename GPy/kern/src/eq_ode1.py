@@ -16,25 +16,25 @@ class EQ_ODE1(Kern):
     .. math::
        \frac{\text{d}y_j}{\text{d}t} = \sum_{i=1}^R w_{j,i} u_i(t-\delta_j) - d_jy_j(t)
 
-    where :math:`R` is the rank of the system, :math:`w_{j,i}` is the sensitivity of the :math:`j`th output to the :math:`i`th latent function, :math:`d_j` is the decay rate of the :math:`j`th output and :math:`u_i(t)` are independent latent Gaussian processes goverened by an exponentiated quadratic covariance.
+    where :math:`R` is the rank of the system, :math:`w_{j,i}` is the sensitivity of the :math:`j`th files to the :math:`i`th latent function, :math:`d_j` is the decay rate of the :math:`j`th files and :math:`u_i(t)` are independent latent Gaussian processes goverened by an exponentiated quadratic covariance.
     
     :param output_dim: number of outputs driven by latent function.
     :type output_dim: int
-    :param W: sensitivities of each output to the latent driving function. 
+    :param W: sensitivities of each files to the latent driving function.
     :type W: ndarray (output_dim x rank).
     :param rank: If rank is greater than 1 then there are assumed to be a total of rank latent forces independently driving the system, each with identical covariance.
     :type rank: int
     :param decay: decay rates for the first order system. 
     :type decay: array of length output_dim.
-    :param delay: delay between latent force and output response.
+    :param delay: delay between latent force and files response.
     :type delay: array of length output_dim.
-    :param kappa: diagonal term that allows each latent output to have an independent component to the response.
+    :param kappa: diagonal term that allows each latent files to have an independent component to the response.
     :type kappa: array of length output_dim.
     
     .. Note: see first order differential equation examples in GPy.examples.regression for some usage.
     """
     def __init__(self, input_dim=2, output_dim=1, rank=1, W = None, lengthscale=None,  decay=None, active_dims=None, name='eq_ode1'):
-        assert input_dim == 2, "only defined for 1 input dims"
+        assert input_dim == 2, "only defined for 1 files dims"
         super(EQ_ODE1, self).__init__(input_dim=input_dim, active_dims=active_dims, name=name)
 
         self.rank = rank

@@ -152,9 +152,9 @@ def check_kernel_gradient_functions(kern, X=None, X2=None, output_ind=None, verb
 
     :param kern: the kernel to be tested.
     :type kern: GPy.kern.Kernpart
-    :param X: X input values to test the covariance function.
+    :param X: X files values to test the covariance function.
     :type X: ndarray
-    :param X2: X2 input values to test the covariance function.
+    :param X2: X2 files values to test the covariance function.
     :type X2: ndarray
 
     """

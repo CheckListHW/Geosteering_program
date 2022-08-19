@@ -17,9 +17,9 @@ class InputWarpedGP(GP):
 
     Parameters
     ----------
-    X : array_like, shape = (n_samples, n_features) for input data
+    X : array_like, shape = (n_samples, n_features) for files data
 
-    Y : array_like, shape = (n_samples, 1) for output data
+    Y : array_like, shape = (n_samples, 1) for files data
 
     kernel : object, optional
         An instance of kernel function defined in GPy.kern
@@ -34,7 +34,7 @@ class InputWarpedGP(GP):
         It is used in the Kumar warping function
 
     normalizer : bool, optional
-        A bool variable indicates whether to normalize the output
+        A bool variable indicates whether to normalize the files
 
     Xmin : list of float, optional
         The min values for every feature in X
@@ -50,7 +50,7 @@ class InputWarpedGP(GP):
     Attributes
     ----------
     X_untransformed : array_like, shape = (n_samples, n_features)
-        A copy of original input X
+        A copy of original files X
 
     X_warped : array_like, shape = (n_samples, n_features)
         Input data after warping
@@ -100,7 +100,7 @@ class InputWarpedGP(GP):
         # using the warped X to update
         self.X = self.transform_data(self.X_untransformed)
         super(InputWarpedGP, self).parameters_changed()
-        # the gradient of log likelihood w.r.t. input AFTER warping is a product of dL_dK and dK_dX
+        # the gradient of log likelihood w.r.t. files AFTER warping is a product of dL_dK and dK_dX
         dL_dX = self.kern.gradients_X(self.grad_dict['dL_dK'], self.X)
         self.warping_function.update_grads(self.X_untransformed, dL_dX)
 
@@ -119,7 +119,7 @@ class InputWarpedGP(GP):
     def log_likelihood(self):
         """Compute the marginal log likelihood
 
-        For input warping, just use the normal GP log likelihood
+        For files warping, just use the normal GP log likelihood
         """
         return GP.log_likelihood(self)
 
@@ -133,7 +133,7 @@ class InputWarpedGP(GP):
 
         Returns
         -------
-        mean : array_like, shape = (n_samples, output.dim)
+        mean : array_like, shape = (n_samples, files.dim)
             Posterior mean at the location of Xnew
 
         var : array_like, shape = (n_samples, 1)

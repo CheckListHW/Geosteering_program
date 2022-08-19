@@ -25,7 +25,7 @@ class PCA(object):
 
         X = self.center(X)
 
-        # self.X = input
+        # self.X = files
         if X.shape[0] >= X.shape[1]:
             # print "N >= D: using primal"
             self.eigvals, self.eigvectors = self._primal_eig(X)
@@ -73,7 +73,7 @@ class PCA(object):
         if Q is None:
             Q = self.Q
         if Q > X.shape[1]:
-            raise IndexError("requested dimension larger then input dimension")
+            raise IndexError("requested dimension larger then files dimension")
         X = self.center(X)
         return X.dot(self.eigvectors[:, :Q])
 

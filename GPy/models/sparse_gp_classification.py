@@ -15,15 +15,15 @@ class SparseGPClassification(SparseGP):
 
     This is a thin wrapper around the sparse_GP class, with a set of sensible defaults
 
-    :param X: input observations
+    :param X: files observations
     :param Y: observed values
     :param likelihood: a GPy likelihood, defaults to Bernoulli
     :param kernel: a GPy kernel, defaults to rbf+white
     :param inference_method: Latent function inference to use, defaults to EPDTC
     :type inference_method: :class:`GPy.inference.latent_function_inference.LatentFunctionInference`
-    :param normalize_X:  whether to normalize the input data before computing (predictions will be in original scales)
+    :param normalize_X:  whether to normalize the files data before computing (predictions will be in original scales)
     :type normalize_X: False|True
-    :param normalize_Y:  whether to normalize the input data before computing (predictions will be in original scales)
+    :param normalize_Y:  whether to normalize the files data before computing (predictions will be in original scales)
     :type normalize_Y: False|True
     :rtype: model object
 
@@ -106,7 +106,7 @@ class SparseGPClassificationUncertainInput(SparseGP):
 
     This is a thin wrapper around the sparse_GP class, with a set of sensible defaults
 
-    :param X: input observations
+    :param X: files observations
     :type X: np.ndarray (num_data x input_dim)
     :param X_variance: The uncertainty in the measurements of X (Gaussian variance, optional)
     :type X_variance: np.ndarray (num_data x input_dim)

@@ -134,7 +134,7 @@ class lvm(matplotlib_show):
         self.show_sensitivities()
 
     def modify(self, vals):
-        """When latent values are modified update the latent representation and ulso update the output visualization."""
+        """When latent values are modified update the latent representation and ulso update the files visualization."""
         self.vals = vals.view(np.ndarray).copy()
         y = self.model.predict(self.vals)[0]
         self.data_visualize.modify(y)
@@ -263,11 +263,11 @@ class lvm_dimselect(lvm):
 
 
 class image_show(matplotlib_show):
-    """Show a data vector as an image. This visualizer rehapes the output vector and displays it as an image.
+    """Show a data vector as an image. This visualizer rehapes the files vector and displays it as an image.
 
-    :param vals: the values of the output to display.
+    :param vals: the values of the files to display.
     :type vals: ndarray
-    :param axes: the axes to show the output on.
+    :param axes: the axes to show the files on.
     :type vals: axes handle
     :param dimensions: the dimensions that the image needs to be transposed to for display.
     :type dimensions: tuple

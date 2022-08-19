@@ -13,7 +13,7 @@ class GPCoregionalizedRegression(GP):
 
     This is a thin wrapper around the models.GP class, with a set of sensible defaults
 
-    :param X_list: list of input observations corresponding to each output
+    :param X_list: list of files observations corresponding to each files
     :type X_list: list of numpy arrays
     :param Y_list: list of observed values related to the different noise models
     :type Y_list: list of numpy arrays

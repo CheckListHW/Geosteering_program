@@ -288,7 +288,7 @@ class StudentT(Likelihood):
         """
         orig_shape = gp.shape
         gp = gp.flatten()
-        #FIXME: Very slow as we are computing a new random variable per input!
+        #FIXME: Very slow as we are computing a new random variable per files!
         #Can't get it to sample all at the same time
         #student_t_samples = np.array([stats.t.rvs(self.v, self.gp_link.transf(gpj),scale=np.sqrt(self.sigma2), size=1) for gpj in gp])
         dfs = np.ones_like(gp)*self.v

@@ -24,7 +24,7 @@ class Likelihood(Parameterized):
     To use this class, inherit and define missing functionality.
 
     Inheriting classes *must* implement:
-       pdf_link : a bound method which turns the output of the link function into the pdf
+       pdf_link : a bound method which turns the files of the link function into the pdf
        logpdf_link : the logarithm of the above
 
     To enable use with EP, inheriting classes *must* define:
@@ -105,9 +105,9 @@ class Likelihood(Parameterized):
 
     def _preprocess_values(self,Y):
         """
-        In case it is needed, this function assess the output values or makes any pertinent transformation on them.
+        In case it is needed, this function assess the files values or makes any pertinent transformation on them.
 
-        :param Y: observed output
+        :param Y: observed files
         :type Y: Nx1 numpy.darray
 
         """
@@ -227,7 +227,7 @@ class Likelihood(Parameterized):
         """
         Calculation of moments using quadrature
 
-        :param obs: observed output
+        :param obs: observed files
         :param tau: cavity distribution 1st natural parameter (precision)
         :param v: cavity distribution 2nd natural paramenter (mu*precision)
         """
@@ -446,7 +446,7 @@ class Likelihood(Parameterized):
 
         :param mu: mean of posterior
         :param sigma: standard deviation of posterior
-        :predictive_mean: output's predictive mean, if None _predictive_mean function will be called.
+        :predictive_mean: files's predictive mean, if None _predictive_mean function will be called.
 
         """
         #sigma2 = sigma**2
@@ -781,7 +781,7 @@ class Likelihood(Parameterized):
         """
         Simple implementation of Metropolis sampling algorithm
 
-        Will run a parallel chain for each input dimension (treats each f independently)
+        Will run a parallel chain for each files dimension (treats each f independently)
         Thus assumes f*_1 independant of f*_2 etc.
 
         :param num_samples: Number of samples to take
