@@ -98,16 +98,18 @@ class GeosteeringModel:
         first_line = LineString(np.column_stack((tr_x, tr_y)))
         second_line = LineString(np.column_stack((markers_top_x, markers_top_y)))
         self.intersection = first_line.intersection(second_line)
+        # если пересечений траектории скважины с кровлей пласта несколько, берем только первое
+        if isinstance(self.intersection, geometry.multipoint.MultiPoint):
+            self.intersection = self.intersection[0]
 
         # задаём параметры по умолчанию
-        self.init_algorithm_params(7, 35, 0.1, 'dtw')
+        self.init_algorithm_params(7, 35, 0.5, 'dtw')
 
     def init_algorithm_params(self, num_of_segments, delta_deg, st, metric):
         self.md_start = get_val(self.intersection.x, self.trajectory, 'MD', target_column='X')
         md = self.trajectory.query("MD >= @self.md_start").MD.to_numpy()
 
-        self.step = (
-                                md.max() - md.min()) / num_of_segments  # длина отрезка на котором предположительно пласт распространяется линейно
+        self.step = (md.max() - md.min()) / num_of_segments  # длина отрезка на котором предположительно пласт распространяется линейно
 
         self.delta_deg = delta_deg  # максимальный угол между начальной и конечной точкой отрезка
         # (условно, при горизонтальном расположении траектории скважины)
@@ -199,13 +201,8 @@ class GeosteeringModel:
 
         return offset_md_points, trajectory_md_points, sintetic_curves[best_sintetic_curve_ind], tr_x, tr_y
 
-
     def start_geosteering(self, plot_matching=False):
         start_offset_point = self.top_offset_MD
-
-        # если пересечений траектории скважины с кровлей пласта несколько, берем только первое
-        if isinstance(self.intersection, geometry.multipoint.MultiPoint):
-            self.intersection = self.intersection[0]
 
         md_start = self.md_start
 
@@ -222,7 +219,11 @@ class GeosteeringModel:
         trajectory_md_points_list = []
         self.sintetic_curve = []
         increment = 0
+
+        import pyprind
+        bar = pyprind.ProgPercent(self.num_of_iterations)
         for iter in range(self.num_of_iterations):
+            bar.update()
             offset_md_points, trajectory_md_points, s_c, tr_x, tr_y = self.geosteering_iteration(md_start=md_start,
                                                                                                  start_offset_point=start_offset_point,
                                                                                                  plot_matching=plot_matching)

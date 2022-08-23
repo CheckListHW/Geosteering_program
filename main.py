@@ -8,17 +8,25 @@ def start(params):
 
     if scenario.Dips:
         from Geosteering_model_with_dips import GeosteeringModel
+        model = GeosteeringModel(scenario=scenario,
+                                 GR_path=params.gr_path)
+
+        model.start_complex_geosteering(min_interp_seg_size=params.segments_count,
+                                        delta_deg=params.delta_deg,
+                                        st=params.st,
+                                        metric=params.metric,
+                                        plot_matching=False)
+
     else:
         from Geosteering_model import GeosteeringModel
-
-    model = GeosteeringModel(scenario=scenario,
-                             GR_path=params.gr_path)
-
-    model.start_complex_geosteering(min_interp_seg_size=params.segments_count,
+        model = GeosteeringModel(scenario=scenario,
+                                 GR_path=params.gr_path)
+        
+        model.init_algorithm_params(num_of_segments=params.segments_count,
                                     delta_deg=params.delta_deg,
                                     st=params.st,
-                                    metric=params.metric,
-                                    plot_matching=False)
+                                    metric=params.metric)
+        model.start_geosteering()
 
     model.save_results_to_xml(path=params.result_path)
 
