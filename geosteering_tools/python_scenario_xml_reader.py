@@ -67,6 +67,7 @@ def is_float(value: str) -> bool:
 
 def set_value_sub_element(parent: xml.etree.ElementTree.Element, name: str, value: str, is_float_value=False):
     if (is_float_value and not is_float(value)) or value in ['', 'None', 'nan']:
+        ET.SubElement(parent, name).text = ''
         return
     ET.SubElement(parent, name).text = value
 
@@ -80,10 +81,10 @@ def find_in_element(parent: xml.etree.ElementTree.Element, name: str, is_float_v
 
 
 class TrajectoryMarker:
-    def __init__(self, md: float, location_x: float, location_y: float, surface_index: int):
+    def __init__(self, md: float, location_x: float, location_y: float, offset_position: int):
         self.Md: float = md
         self.Location = Point(location_x, location_y)
-        self.SurfaceIndex: int = surface_index
+        self.OffsetPosition: int = offset_position
 
 
 class Scenario:
@@ -138,12 +139,7 @@ class Scenario:
             self.Markers.append(TrajectoryMarker(find_in_element(marker_xml, 'Md', True),
                                                  find_in_element(marker_xml.find('Location'), 'X', True),
                                                  find_in_element(marker_xml.find('Location'), 'Y', True),
-                                                 int(find_in_element(marker_xml, 'SurfaceIndex', True))))
-
-    def save_json(self, path: str):
-        with open(path, mode='w+') as json_file:
-            json.dump(self.__get_data_as_dict(), json_file, ensure_ascii=False)
-            json_file.close()
+                                                 int(find_in_element(marker_xml, 'OffsetPosition', True))))
 
     def save_xml(self, path: str):
         xml_file = open(path, "wb")
@@ -160,7 +156,7 @@ class Scenario:
 
         trajectory_xml = ET.SubElement(scenario_xml, 'Trajectory')
         points_xml = ET.SubElement(trajectory_xml, 'Points')
-        for trajectoryPoint in self.Trajectory.Points[:20]:
+        for trajectoryPoint in self.Trajectory.Points:
             trajectory_point_xml = ET.SubElement(points_xml, 'TrajectoryPoint')
 
             set_value_sub_element(trajectory_point_xml, 'Md', str(trajectoryPoint.Md), True)
@@ -221,7 +217,7 @@ class Scenario:
             trajectory_marker_xml = ET.SubElement(markers_xml, 'TrajectoryMarker')
 
             set_value_sub_element(trajectory_marker_xml, 'Md', str(marker.Md), True)
-            set_value_sub_element(trajectory_marker_xml, 'SurfaceIndex', str(marker.SurfaceIndex), True)
+            set_value_sub_element(trajectory_marker_xml, 'OffsetPosition', str(marker.OffsetPosition), True)
 
             location_xml = ET.SubElement(trajectory_marker_xml, 'Location')
 
@@ -230,31 +226,29 @@ class Scenario:
 
         return scenario_xml
 
-    def __get_data_as_dict(self) -> dict:
-        points: List[dict] = []
-        for trajectoryPoint in self.Trajectory.Points:
-            points.append({'Md': trajectoryPoint.Md, 'SectionPoint': {'X': trajectoryPoint.SectionPoint.X,
-                                                                      'Y': trajectoryPoint.SectionPoint.Y}})
 
-        surfaces: List[dict] = []
-        for surface in self.Section.Surfaces:
-            surfaces.append({'Name': surface.Name, 'Points': [i.__dict__ for i in surface.Points]})
-
-        properties: List[dict] = []
-        for prop in self.Property:
-            properties.append({'Name': prop.Name,
-                               'Real': {'Points': [i.__dict__ for i in prop.Real.Points]},
-                               'Offset': {'Points': [i.__dict__ for i in prop.Offset.Points]}})
-
-        return {'Trajectory': {'Points': points},
-                'Section': {'Surfaces': surfaces},
-                'Property': properties,
-                'BeginMd': self.BeginMd,
-                'EndMd': self.EndMd}
-
-
-if __name__ == '__main__':
-    sc = Scenario()
-    sc.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/files/well2landing.xml')
-    sc.save_xml('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/files/sasat2.xml')
-    print('ok')
+# def test_load_and_save(sc1: Scenario, sc2: Scenario):
+#     sc1 = Scenario()
+#     sc1.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/AddMarkers3.xml')
+#     print(len(sc1.Trajectory.Points))
+#     print(len(sc1.Property[0].Real.Points))
+#     print(len(sc1.Property[0].Offset.Points))
+#     sc1.save_xml('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
+#
+#     sc = Scenario()
+#     sc.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
+#     print(len(sc.Trajectory.Points))
+#     print(len(sc.Property[0].Real.Points))
+#     print(len(sc.Property[0].Offset.Points))
+#
+#
+# if __name__ == '__main__':
+#     sc1 = Scenario()
+#     sc1.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/AddMarkers3.xml')
+#     sc1.save_xml('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
+#
+#     sc2 = Scenario()
+#     sc2.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
+#
+#     test_load_and_save()
+#     print('ok')
