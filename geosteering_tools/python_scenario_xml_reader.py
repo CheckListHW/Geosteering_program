@@ -117,29 +117,32 @@ class Scenario:
                 surface.Points.append(Point(find_in_element(point_element, 'X', True),
                                             find_in_element(point_element, 'Y', True)))
 
-        for property_element in list(scenario_xml.find('Properties')):
-            prop = Property(find_in_element(property_element, 'Name'))
-            self.Property.append(prop)
+        if scenario_xml.find('Properties'):
+            for property_element in list(scenario_xml.find('Properties')):
+                prop = Property(find_in_element(property_element, 'Name'))
+                self.Property.append(prop)
 
-            for point_element in list(property_element.find('Real').find('Points')):
-                prop.Real.Points.append(CurvePoint(find_in_element(point_element, 'Position', True),
-                                                   find_in_element(point_element, 'Value', True)))
+                for point_element in list(property_element.find('Real').find('Points')):
+                    prop.Real.Points.append(CurvePoint(find_in_element(point_element, 'Position', True),
+                                                       find_in_element(point_element, 'Value', True)))
 
-            for point_element in list(property_element.find('Offset').find('Points')):
-                prop.Offset.Points.append(CurvePoint(find_in_element(point_element, 'Position', True),
-                                                     find_in_element(point_element, 'Value', True)))
+                for point_element in list(property_element.find('Offset').find('Points')):
+                    prop.Offset.Points.append(CurvePoint(find_in_element(point_element, 'Position', True),
+                                                         find_in_element(point_element, 'Value', True)))
 
-        for section_dip_xml in list(scenario_xml.find('Dips')):
-            self.Dips.append(SectionDip(find_in_element(section_dip_xml, 'Md', True),
-                                        find_in_element(section_dip_xml, 'Dip', True),
-                                        find_in_element(section_dip_xml.find('Location'), 'X', True),
-                                        find_in_element(section_dip_xml.find('Location'), 'Y', True)))
+        if scenario_xml.find('Dips'):
+            for section_dip_xml in list(scenario_xml.find('Dips')):
+                self.Dips.append(SectionDip(find_in_element(section_dip_xml, 'Md', True),
+                                            find_in_element(section_dip_xml, 'Dip', True),
+                                            find_in_element(section_dip_xml.find('Location'), 'X', True),
+                                            find_in_element(section_dip_xml.find('Location'), 'Y', True)))
 
-        for marker_xml in list(scenario_xml.find('Markers')):
-            self.Markers.append(TrajectoryMarker(find_in_element(marker_xml, 'Md', True),
-                                                 find_in_element(marker_xml.find('Location'), 'X', True),
-                                                 find_in_element(marker_xml.find('Location'), 'Y', True),
-                                                 int(find_in_element(marker_xml, 'OffsetPosition', True))))
+        if scenario_xml.find('Markers'):
+            for marker_xml in list(scenario_xml.find('Markers')):
+                self.Markers.append(TrajectoryMarker(find_in_element(marker_xml, 'Md', True),
+                                                     find_in_element(marker_xml.find('Location'), 'X', True),
+                                                     find_in_element(marker_xml.find('Location'), 'Y', True),
+                                                     int(find_in_element(marker_xml, 'OffsetPosition', True))))
 
     def save_xml(self, path: str):
         xml_file = open(path, "wb")
@@ -201,16 +204,16 @@ class Scenario:
                                       True)
                 set_value_sub_element(curve_point_points_real_property_xml, 'Value', str(surface_point.Value), True)
 
-        dips_xml = ET.SubElement(scenario_xml, 'Dips')
-        for section_dip in self.Dips:
-            section_dip_xml = ET.SubElement(dips_xml, 'SectionDip')
-
-            set_value_sub_element(section_dip_xml, 'Md', str(section_dip.Md), True)
-            set_value_sub_element(section_dip_xml, 'Dip', str(section_dip.Dip), True)
-            location_xml = ET.SubElement(section_dip_xml, 'Location')
-
-            set_value_sub_element(location_xml, 'X', str(section_dip.Location.X), True)
-            set_value_sub_element(location_xml, 'Y', str(section_dip.Location.Y), True)
+        # dips_xml = ET.SubElement(scenario_xml, 'Dips')
+        # for section_dip in self.Dips:
+        #     section_dip_xml = ET.SubElement(dips_xml, 'SectionDip')
+        #
+        #     set_value_sub_element(section_dip_xml, 'Md', str(section_dip.Md), True)
+        #     set_value_sub_element(section_dip_xml, 'Dip', str(section_dip.Dip), True)
+        #     location_xml = ET.SubElement(section_dip_xml, 'Location')
+        #
+        #     set_value_sub_element(location_xml, 'X', str(section_dip.Location.X), True)
+        #     set_value_sub_element(location_xml, 'Y', str(section_dip.Location.Y), True)
 
         markers_xml = ET.SubElement(scenario_xml, 'Markers')
         for marker in self.Markers:
@@ -227,28 +230,12 @@ class Scenario:
         return scenario_xml
 
 
-# def test_load_and_save(sc1: Scenario, sc2: Scenario):
-#     sc1 = Scenario()
-#     sc1.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/AddMarkers3.xml')
-#     print(len(sc1.Trajectory.Points))
-#     print(len(sc1.Property[0].Real.Points))
-#     print(len(sc1.Property[0].Offset.Points))
-#     sc1.save_xml('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
-#
-#     sc = Scenario()
-#     sc.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
-#     print(len(sc.Trajectory.Points))
-#     print(len(sc.Property[0].Real.Points))
-#     print(len(sc.Property[0].Offset.Points))
-#
-#
-# if __name__ == '__main__':
-#     sc1 = Scenario()
-#     sc1.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/AddMarkers3.xml')
-#     sc1.save_xml('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
-#
-#     sc2 = Scenario()
-#     sc2.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
-#
-#     test_load_and_save()
-#     print('ok')
+if __name__ == '__main__':
+    sc1 = Scenario()
+    sc1.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/AddMarkers3.xml')
+    sc1.save_xml('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
+
+    sc2 = Scenario()
+    sc2.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
+
+    print('ok')

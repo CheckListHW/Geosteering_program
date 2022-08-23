@@ -11,16 +11,15 @@ import lasio
 from scipy.interpolate import interp1d
 
 
-class Geostering_Model():
-    def __init__(self, xml_path, GR_path):
+class GeosteeringModel:
+    def __init__(self, scenario: Scenario, GR_path):
         """Считываем все данные которые потребуются для геонавигации
         Args:
             xml_path (str): путь к xml файлу с данными GO
             GR_path (str): путь к las файлу с опорным каротажем
         """
         # считываем xml файл со сценарием
-        self.Cor = Scenario()
-        self.Cor.load(xml_path)
+        self.Cor = scenario
 
         # далее создаем датафреймы со всеми данными
         X, Y, MD = [], [], []
@@ -446,7 +445,10 @@ if __name__ == "__main__":
     xml_path = 'files/input.xml'
     GR_path = 'files/input.xml'
 
-    model = Geostering_Model(xml_path=xml_path, GR_path=GR_path)
+    Cor = Scenario()
+    Cor.load(xml_path)
+
+    model = GeosteeringModel(scenario=Cor, GR_path=GR_path)
 
     model.start_complex_geosteering(min_interp_seg_size=100,
                                     delta_deg=10,

@@ -15,10 +15,9 @@ from scipy.interpolate import interp1d
 
 
 class GeosteeringModel:
-    def __init__(self, xml_path, GR_path):
+    def __init__(self, scenario: Scenario, GR_path):
         # считываем xml файл со сценарием
-        self.Cor = Scenario()
-        self.Cor.load(xml_path)
+        self.Cor = scenario
 
         # далее создаем датафреймы со всеми данными
         X, Y, MD = [], [], []

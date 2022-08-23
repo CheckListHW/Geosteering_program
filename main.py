@@ -1,9 +1,17 @@
 from geosteering_tools.arg_parser import arg_parser
+from geosteering_tools.python_scenario_xml_reader import Scenario
 
 
 def start(params):
-    from G_exe import Geostering_Model
-    model = Geostering_Model(xml_path=params.scenario_path,
+    scenario = Scenario()
+    scenario.load(params.scenario_path)
+
+    if scenario.Dips:
+        from Geosteering_model_with_dips import GeosteeringModel
+    else:
+        from Geosteering_model import GeosteeringModel
+
+    model = GeosteeringModel(scenario=scenario,
                              GR_path=params.gr_path)
 
     model.start_complex_geosteering(min_interp_seg_size=params.segments_count,
