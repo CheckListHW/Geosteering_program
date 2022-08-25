@@ -220,10 +220,7 @@ class GeosteeringModel:
         self.sintetic_curve = []
         increment = 0
 
-        import pyprind
-        bar = pyprind.ProgPercent(self.num_of_iterations)
         for iter in range(self.num_of_iterations):
-            bar.update()
             offset_md_points, trajectory_md_points, s_c, tr_x, tr_y = self.geosteering_iteration(md_start=md_start,
                                                                                                  start_offset_point=start_offset_point,
                                                                                                  plot_matching=plot_matching)
