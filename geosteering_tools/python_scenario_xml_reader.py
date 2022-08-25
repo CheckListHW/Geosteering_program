@@ -81,10 +81,10 @@ def find_in_element(parent: xml.etree.ElementTree.Element, name: str, is_float_v
 
 
 class TrajectoryMarker:
-    def __init__(self, md: float, location_x: float, location_y: float, offset_position: int):
+    def __init__(self, md: float, location_x: float, location_y: float, offset_position: float):
         self.Md: float = md
         self.Location = Point(location_x, location_y)
-        self.OffsetPosition: int = offset_position
+        self.OffsetPosition: float = offset_position
 
 
 class Scenario:
