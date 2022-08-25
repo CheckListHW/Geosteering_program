@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.fft import *
-import skfda
+# import skfda
 
 
 def plot_curves(curve1, curve2):
@@ -22,26 +22,26 @@ def get_alpha(log):
     return norm_log
 
 
-def lp_distance(curve1, curve2):
-    lp_dist = skfda.misc.metrics.LpDistance(p=2)
-    fd1 = skfda.FDataGrid(curve1)
-    fd2 = skfda.FDataGrid(curve2)
-    distance = lp_dist(fd1, fd2)
-    return distance[0]
-
-
-def cos_sim(curve1, curve2):
-    fd1 = skfda.FDataGrid(curve1)
-    fd2 = skfda.FDataGrid(curve2)
-    score = skfda.misc.cosine_similarity(fd1, fd2)
-    return score[0]
-
-
-def filter_signal(signal, threshold=1e8):
-    fourier = rfft(signal)
-    frequencies = rfftfreq(signal.size, d=20e-3 / signal.size)
-    fourier[frequencies > threshold] = 0
-    return irfft(fourier)
+# def lp_distance(curve1, curve2):
+#     lp_dist = skfda.misc.metrics.LpDistance(p=2)
+#     fd1 = skfda.FDataGrid(curve1)
+#     fd2 = skfda.FDataGrid(curve2)
+#     distance = lp_dist(fd1, fd2)
+#     return distance[0]
+#
+#
+# def cos_sim(curve1, curve2):
+#     fd1 = skfda.FDataGrid(curve1)
+#     fd2 = skfda.FDataGrid(curve2)
+#     score = skfda.misc.cosine_similarity(fd1, fd2)
+#     return score[0]
+#
+#
+# def filter_signal(signal, threshold=1e8):
+#     fourier = rfft(signal)
+#     frequencies = rfftfreq(signal.size, d=20e-3 / signal.size)
+#     fourier[frequencies > threshold] = 0
+#     return irfft(fourier)
 
 
 def get_val(point, df, column, target_column='MD'):

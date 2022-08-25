@@ -35,9 +35,9 @@ def arg_parser() -> (argparse.Namespace, [str]):
 
     parser.add_argument(
         '--st',
-        type=int,
-        default=1,
-        help=' (default: 1)'
+        type=float,
+        default=0.5,
+        help=' (default: 0.5)'
     )
 
     parser.add_argument(
