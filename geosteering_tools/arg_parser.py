@@ -8,15 +8,15 @@ def arg_parser() -> (argparse.Namespace, [str]):
     parser.add_argument(
         '--scenario_path',
         type=str,
-        default='files.xml',
-        help='Путь до сценария(scenario)  в формате юxml (default: "files.xml")'
+        default='input.xml',
+        help='Путь до сценария(scenario)  в формате юxml (default: "input.xml")'
     )
 
     parser.add_argument(
         '--gr_path',
         type=str,
-        default='files.las',
-        help='Путь до файла с каратажом опорных скважин в формате .las  (default: "files.las")'
+        default='input.las',
+        help='Путь до файла с каратажом опорных скважин в формате .las  (default: "input.las")'
     )
 
     parser.add_argument(
@@ -51,7 +51,7 @@ def arg_parser() -> (argparse.Namespace, [str]):
         '--result_path',
         type=str,
         default='files.xml',
-        help='Путь сохранения файла (default: files.xml)'
+        help='Путь сохранения файла (default: output.xml)'
     )
 
     current_namespace = parser.parse_args()

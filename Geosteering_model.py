@@ -295,7 +295,7 @@ class GeosteeringModel:
         plot_curves(self.sintetic_curve,
                     self.gamma_real[self.gamma_real.MD >= self.md_start].value.to_numpy()[:len(self.sintetic_curve)])
 
-    def save_results_to_xml(self):
+    def save_results_to_xml(self, path='output.xml'):
         new_top_markers = []
         new_bot_markers = []
 
@@ -325,4 +325,4 @@ class GeosteeringModel:
         self.Cor.Section.Surfaces[0].Points = new_top_markers
         self.Cor.Section.Surfaces[1].Points = new_bot_markers
 
-        self.Cor.save_xml('files/result.xml')
+        self.Cor.save_xml(path)

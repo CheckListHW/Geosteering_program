@@ -1,4 +1,3 @@
-import json
 import xml.etree.ElementTree
 import xml.etree.ElementTree as ET
 from typing import List, Optional, Union
@@ -204,16 +203,16 @@ class Scenario:
                                       True)
                 set_value_sub_element(curve_point_points_real_property_xml, 'Value', str(surface_point.Value), True)
 
-        # dips_xml = ET.SubElement(scenario_xml, 'Dips')
-        # for section_dip in self.Dips:
-        #     section_dip_xml = ET.SubElement(dips_xml, 'SectionDip')
-        #
-        #     set_value_sub_element(section_dip_xml, 'Md', str(section_dip.Md), True)
-        #     set_value_sub_element(section_dip_xml, 'Dip', str(section_dip.Dip), True)
-        #     location_xml = ET.SubElement(section_dip_xml, 'Location')
-        #
-        #     set_value_sub_element(location_xml, 'X', str(section_dip.Location.X), True)
-        #     set_value_sub_element(location_xml, 'Y', str(section_dip.Location.Y), True)
+        dips_xml = ET.SubElement(scenario_xml, 'Dips')
+        for section_dip in self.Dips:
+            section_dip_xml = ET.SubElement(dips_xml, 'SectionDip')
+
+            set_value_sub_element(section_dip_xml, 'Md', str(section_dip.Md), True)
+            set_value_sub_element(section_dip_xml, 'Dip', str(section_dip.Dip), True)
+            location_xml = ET.SubElement(section_dip_xml, 'Location')
+
+            set_value_sub_element(location_xml, 'X', str(section_dip.Location.X), True)
+            set_value_sub_element(location_xml, 'Y', str(section_dip.Location.Y), True)
 
         markers_xml = ET.SubElement(scenario_xml, 'Markers')
         for marker in self.Markers:

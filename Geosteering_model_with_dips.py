@@ -389,7 +389,7 @@ class GeosteeringModel:
         self.top_y, self.top_x = res['y_outer'], res['x_outer']
         self.bot_y, self.bot_x = res['y_inner'], res['x_inner']
 
-    def save_results_to_xml(self, l=150, path='output.xml'):
+    def save_results_to_xml(self, path='output.xml', l=150):
         """
         Сохранение результатов в xml
         """
