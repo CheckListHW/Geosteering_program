@@ -141,7 +141,7 @@ class Scenario:
                 self.Markers.append(TrajectoryMarker(find_in_element(marker_xml, 'Md', True),
                                                      find_in_element(marker_xml.find('Location'), 'X', True),
                                                      find_in_element(marker_xml.find('Location'), 'Y', True),
-                                                     int(find_in_element(marker_xml, 'OffsetPosition', True))))
+                                                     find_in_element(marker_xml, 'OffsetPosition', True)))
 
     def save_xml(self, path: str):
         xml_file = open(path, "wb")
@@ -233,8 +233,3 @@ if __name__ == '__main__':
     sc1 = Scenario()
     sc1.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/AddMarkers3.xml')
     sc1.save_xml('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
-
-    sc2 = Scenario()
-    sc2.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
-
-    print('ok')
