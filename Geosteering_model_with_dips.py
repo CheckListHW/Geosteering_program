@@ -195,12 +195,12 @@ class GeosteeringModel:
         elif metric == 'dtw':
             self.dist_calculation = lambda curve1, curve2: dtaidistance.dtw.distance(curve1, curve2, window=10)
             self.get_best_sintetic_curve_ind = lambda d_l: np.argmin(d_l)
-        elif metric == 'cos_sim':
-            self.dist_calculation = lambda curve1, curve2: cos_sim(curve1, curve2)
-            self.get_best_sintetic_curve_ind = lambda d_l: np.argmax(d_l)
-        elif metric == 'lp_distance':
-            self.dist_calculation = lambda curve1, curve2: lp_distance(curve1, curve2)
-            self.get_best_sintetic_curve_ind = lambda d_l: np.argmin(d_l)
+        # elif metric == 'cos_sim':
+        #     self.dist_calculation = lambda curve1, curve2: cos_sim(curve1, curve2)
+        #     self.get_best_sintetic_curve_ind = lambda d_l: np.argmax(d_l)
+        # elif metric == 'lp_distance':
+        #     self.dist_calculation = lambda curve1, curve2: lp_distance(curve1, curve2)
+        #     self.get_best_sintetic_curve_ind = lambda d_l: np.argmin(d_l)
 
         # рассчитываем количество отрезков по которым будем матчить кривые
         self.num_of_iterations = num_of_segments

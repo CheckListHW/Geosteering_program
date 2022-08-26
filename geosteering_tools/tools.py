@@ -1,17 +1,17 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy.fft import *
-from skfda.misc.metrics import LpDistance
-from skfda.misc import cosine_similarity
-from skfda import FDataGrid
-import matplotlib.pyplot as plt
+from numpy.fft import rfft, rfftfreq, irfft
+# from skfda.misc.metrics import LpDistance
+# from skfda.misc import cosine_similarity
+# from skfda import FDataGrid
+# import matplotlib.pyplot as plt
 
 
 def plot_curves(curve1, curve2):
     x = range(len(curve1))
-    plt.plot(x, curve1, '-r')
-    plt.plot(x, curve2, '-g')
-    plt.show()
+    # plt.plot(x, curve1, '-r')
+    # plt.plot(x, curve2, '-g')
+    # plt.show()
 
 
 def get_alpha(log):
@@ -25,20 +25,21 @@ def get_alpha(log):
     return norm_log
 
 
-def lp_distance(curve1, curve2):
-    lp_dist = LpDistance(p=2)
-    fd1 = FDataGrid(curve1)
-    fd2 = FDataGrid(curve2)
-    distance = lp_dist(fd1, fd2)
-    return distance[0]
-
-
-def cos_sim(curve1, curve2):
-    fd1 = FDataGrid(curve1)
-    fd2 = FDataGrid(curve2)
-    score = cosine_similarity(fd1, fd2)
-    return score[0]
-
+# def lp_distance(curve1, curve2):
+#     lp_dist = LpDistance(p=2)
+#     fd1 = FDataGrid(curve1)
+#     fd2 = FDataGrid(curve2)
+#     distance = lp_dist(fd1, fd2)
+#     return distance[0]
+#
+#
+# def cos_sim(curve1, curve2):
+#     fd1 = FDataGrid(curve1)
+#     fd2 = FDataGrid(curve2)
+#     score = cosine_similarity(fd1, fd2)
+#     return score[0]
+#
+#
 
 def filter_signal(signal, threshold=1e8):
     fourier = rfft(signal)
@@ -55,7 +56,7 @@ def get_val(point, df, column, target_column='MD'):
     prev_v = df_delta[df_delta['delta'] == prev_d][column].values[0]
     next_v = df_delta[df_delta['delta'] == next_d][column].values[0]
     prev_d, next_d = abs(prev_d), abs(next_d)
-    val = prev_v + ((next_v - prev_v)*prev_d)/ (prev_d + next_d)
+    val = prev_v + ((next_v - prev_v)*prev_d)/(prev_d + next_d)
     return val
 
 
@@ -67,7 +68,7 @@ def magn(a, dim):
 
 def parallel_curves(x, y, d=1, flag1=True):
     if x.ndim != 1 or y.ndim != 1:
-        raise Exception ("X and Y must be vectors")
+        raise Exception("X and Y must be vectors")
 
     dx = np.gradient(x)
     dy = np.gradient(y)

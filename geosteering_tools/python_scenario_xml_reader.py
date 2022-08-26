@@ -66,7 +66,6 @@ def is_float(value: str) -> bool:
 
 def set_value_sub_element(parent: xml.etree.ElementTree.Element, name: str, value: str, is_float_value=False):
     if (is_float_value and not is_float(value)) or value in ['', 'None', 'nan']:
-        ET.SubElement(parent, name).text = ''
         return
     ET.SubElement(parent, name).text = value
 
@@ -154,7 +153,6 @@ class Scenario:
 
         set_value_sub_element(scenario_xml, 'BeginMd', str(self.BeginMd), True)
         set_value_sub_element(scenario_xml, 'EndMd', str(self.EndMd), True)
-        set_value_sub_element(scenario_xml, 'Markers', str(self.Markers), True)
 
         trajectory_xml = ET.SubElement(scenario_xml, 'Trajectory')
         points_xml = ET.SubElement(trajectory_xml, 'Points')
@@ -231,5 +229,6 @@ class Scenario:
 
 if __name__ == '__main__':
     sc1 = Scenario()
-    sc1.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/AddMarkers3.xml')
-    sc1.save_xml('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
+    sc1.load('C:/Users/kosac/Desktop/Geosteering/Data/Input.xml')
+    sc1.save_xml('C:/Users/kosac/Desktop/Geosteering/Data/output.xml')
+    print('ok')
