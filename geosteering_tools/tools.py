@@ -1,14 +1,17 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy.fft import *
-# import skfda
+from numpy.fft import rfft, rfftfreq, irfft
+# from skfda.misc.metrics import LpDistance
+# from skfda.misc import cosine_similarity
+# from skfda import FDataGrid
+# import matplotlib.pyplot as plt
 
 
 def plot_curves(curve1, curve2):
     x = range(len(curve1))
-    plt.plot(x, curve1, '-r')
-    plt.plot(x, curve2, '-g')
-    plt.show()
+    # plt.plot(x, curve1, '-r')
+    # plt.plot(x, curve2, '-g')
+    # plt.show()
 
 
 def get_alpha(log):
@@ -18,30 +21,31 @@ def get_alpha(log):
     '''
     max_well = np.max(log)
     min_well = np.min(log)
-    norm_log = np.array([(x - min_well) / (max_well - min_well) for x in log], dtype=np.double)
+    norm_log = np.array([(x - min_well)/(max_well - min_well) for x in log],dtype=np.double)
     return norm_log
 
 
 # def lp_distance(curve1, curve2):
-#     lp_dist = skfda.misc.metrics.LpDistance(p=2)
-#     fd1 = skfda.FDataGrid(curve1)
-#     fd2 = skfda.FDataGrid(curve2)
+#     lp_dist = LpDistance(p=2)
+#     fd1 = FDataGrid(curve1)
+#     fd2 = FDataGrid(curve2)
 #     distance = lp_dist(fd1, fd2)
 #     return distance[0]
 #
 #
 # def cos_sim(curve1, curve2):
-#     fd1 = skfda.FDataGrid(curve1)
-#     fd2 = skfda.FDataGrid(curve2)
-#     score = skfda.misc.cosine_similarity(fd1, fd2)
+#     fd1 = FDataGrid(curve1)
+#     fd2 = FDataGrid(curve2)
+#     score = cosine_similarity(fd1, fd2)
 #     return score[0]
 #
 #
-# def filter_signal(signal, threshold=1e8):
-#     fourier = rfft(signal)
-#     frequencies = rfftfreq(signal.size, d=20e-3 / signal.size)
-#     fourier[frequencies > threshold] = 0
-#     return irfft(fourier)
+
+def filter_signal(signal, threshold=1e8):
+    fourier = rfft(signal)
+    frequencies = rfftfreq(signal.size, d=20e-3/signal.size)
+    fourier[frequencies > threshold] = 0
+    return irfft(fourier)
 
 
 def get_val(point, df, column, target_column='MD'):
@@ -52,12 +56,12 @@ def get_val(point, df, column, target_column='MD'):
     prev_v = df_delta[df_delta['delta'] == prev_d][column].values[0]
     next_v = df_delta[df_delta['delta'] == next_d][column].values[0]
     prev_d, next_d = abs(prev_d), abs(next_d)
-    val = prev_v + ((next_v - prev_v) * prev_d) / (prev_d + next_d)
+    val = prev_v + ((next_v - prev_v)*prev_d)/(prev_d + next_d)
     return val
 
 
 def magn(a, dim):
-    dim = dim - 1
+    dim = dim-1
     b = np.sum(np.conj(a) * a, axis=dim)
     return np.sqrt(b)
 
@@ -82,7 +86,7 @@ def parallel_curves(x, y, d=1, flag1=True):
     unv[:, 0] = nv[:, 0] / norm_nv
     unv[:, 1] = nv[:, 1] / norm_nv
 
-    R = ((dx ** 2 + dy ** 2) ** 1.5) / (np.abs(dx * dy2 - dy * dx2))
+    R = ((dx**2 + dy**2) ** 1.5)/(np.abs(dx*dy2 - dy*dx2))
 
     overlap = R < d
 
@@ -91,17 +95,17 @@ def parallel_curves(x, y, d=1, flag1=True):
     concavity = 2 * dy3 - 1
 
     if flag1 is True:
-        x_inner = x - unv[:, 0] * concavity * d
-        y_inner = y - unv[:, 1] * concavity * d
+        x_inner = x-unv[:, 0] * concavity * d
+        y_inner = y-unv[:, 1] * concavity * d
 
-        x_outer = x + unv[:, 0] * concavity * d
-        y_outer = y + unv[:, 1] * concavity * d
+        x_outer = x+unv[:, 0] * concavity * d
+        y_outer = y+unv[:, 1] * concavity * d
     else:
-        x_inner = x - unv[:, 0] * d - 2
-        y_inner = y - unv[:, 1] * d
+        x_inner = x-unv[:, 0] * d - 2
+        y_inner = y-unv[:, 1] * d
 
-        x_outer = x + unv[:, 0] * d + 2
-        y_outer = y + unv[:, 1] * d
+        x_outer = x+unv[:, 0] * d + 2
+        y_outer = y+unv[:, 1] * d
 
     res = {'x_inner': x_inner,
            'y_inner': y_inner,

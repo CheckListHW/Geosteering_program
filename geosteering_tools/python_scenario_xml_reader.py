@@ -1,4 +1,3 @@
-import json
 import xml.etree.ElementTree
 import xml.etree.ElementTree as ET
 from typing import List, Optional, Union
@@ -67,7 +66,6 @@ def is_float(value: str) -> bool:
 
 def set_value_sub_element(parent: xml.etree.ElementTree.Element, name: str, value: str, is_float_value=False):
     if (is_float_value and not is_float(value)) or value in ['', 'None', 'nan']:
-        ET.SubElement(parent, name).text = ''
         return
     ET.SubElement(parent, name).text = value
 
@@ -81,10 +79,10 @@ def find_in_element(parent: xml.etree.ElementTree.Element, name: str, is_float_v
 
 
 class TrajectoryMarker:
-    def __init__(self, md: float, location_x: float, location_y: float, offset_position: int):
+    def __init__(self, md: float, location_x: float, location_y: float, offset_position: float):
         self.Md: float = md
         self.Location = Point(location_x, location_y)
-        self.OffsetPosition: int = offset_position
+        self.OffsetPosition: float = offset_position
 
 
 class Scenario:
@@ -142,7 +140,7 @@ class Scenario:
                 self.Markers.append(TrajectoryMarker(find_in_element(marker_xml, 'Md', True),
                                                      find_in_element(marker_xml.find('Location'), 'X', True),
                                                      find_in_element(marker_xml.find('Location'), 'Y', True),
-                                                     int(find_in_element(marker_xml, 'OffsetPosition', True))))
+                                                     find_in_element(marker_xml, 'OffsetPosition', True)))
 
     def save_xml(self, path: str):
         xml_file = open(path, "wb")
@@ -155,7 +153,6 @@ class Scenario:
 
         set_value_sub_element(scenario_xml, 'BeginMd', str(self.BeginMd), True)
         set_value_sub_element(scenario_xml, 'EndMd', str(self.EndMd), True)
-        set_value_sub_element(scenario_xml, 'Markers', str(self.Markers), True)
 
         trajectory_xml = ET.SubElement(scenario_xml, 'Trajectory')
         points_xml = ET.SubElement(trajectory_xml, 'Points')
@@ -232,10 +229,6 @@ class Scenario:
 
 if __name__ == '__main__':
     sc1 = Scenario()
-    sc1.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/AddMarkers3.xml')
-    sc1.save_xml('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
-
-    sc2 = Scenario()
-    sc2.load('C:/Users/KosachevIV/PycharmProjects/Geosteering_program/Data/SaveAddMarkers3.xml')
-
+    sc1.load('C:/Users/kosac/Desktop/Geosteering/Data/Input.xml')
+    sc1.save_xml('C:/Users/kosac/Desktop/Geosteering/Data/output.xml')
     print('ok')
