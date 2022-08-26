@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from numpy.fft import rfft, rfftfreq, irfft
 # from skfda.misc.metrics import LpDistance
