@@ -1,9 +1,5 @@
 if exist Geosteering\venv rmdir /Q /S Geosteering\venv
-call Python\python -m venv Geosteering\venv
-cd Geosteering\venv\Scripts
-call activate
-call python.exe -m pip install --upgrade pip
-call pip install dtaidistance lasio scipy shapely pandas scikit-learn
-cd ..
-cd ..
-cd ..
+call Geosteering\Python\python -m venv Geosteering\venv
+call Geosteering\venv\Scripts\activate
+call Geosteering\venv\Scripts\python.exe -m pip install --upgrade pip
+call Geosteering\venv\Scripts\pip install dtaidistance lasio scipy shapely pandas scikit-learn
