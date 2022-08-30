@@ -1,14 +1,9 @@
 from geosteering_tools.python_scenario_xml_reader import *
 from geosteering_tools.tools import *
 import pandas as pd
-# import plotly.express as px
 import numpy as np
-# from sklearn.preprocessing import MinMaxScaler
-# import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import dtaidistance
-from shapely import geometry
-from shapely.geometry import LineString
 from scipy import stats
 import lasio
 from scipy.interpolate import interp1d
@@ -16,11 +11,6 @@ from scipy.interpolate import interp1d
 
 class GeosteeringModel:
     def __init__(self, scenario: Scenario, GR_path):
-        """Считываем все данные которые потребуются для геонавигации
-        Args:
-            xml_path (str): путь к xml файлу с данными GO
-            GR_path (str): путь к las файлу с опорным каротажем
-        """
         # считываем xml файл со сценарием
         self.Cor = scenario
 
@@ -45,7 +35,7 @@ class GeosteeringModel:
         gamma_real['value'] = val
         gamma_real = gamma_real[(np.abs(stats.zscore(gamma_real)) < 3).all(axis=1)]  # удаляем выбросы
         self.gamma_real = gamma_real.dropna()  # данные реального каротажа снятого со скважины при бурении
-        clean_signal = filter_signal(self.gamma_real.value.to_numpy(), threshold=1e5)  # сглаживание/очистка от шумов
+        clean_signal = filter_signal(self.gamma_real.value.to_numpy(), threshold=1e4)  # сглаживание/очистка от шумов
         self.gamma_real = self.gamma_real.iloc[:len(clean_signal)]
         self.gamma_real['value'] = get_alpha(clean_signal)
 
@@ -77,35 +67,31 @@ class GeosteeringModel:
         gamma_offset['value'] = val
         gamma_offset = gamma_offset.dropna()
 
-        top_offset_MD_ind = np.where(gamma_offset.MD.to_numpy() == 10000)[
-            0]  # кровля пласта всегда лежит под MD == 10000
-        bot_offset_MD_ind = np.where(gamma_offset.MD.to_numpy() == 20000)[
-            0]  # подошва пласта всегда лежит под MD == 20000
+        top_offset_MD_ind = np.where(gamma_offset.MD.to_numpy() == 10000)[0]  # кровля пласта всегда лежит под MD == 10000
+        bot_offset_MD_ind = np.where(gamma_offset.MD.to_numpy() == 20000)[0]  # подошва пласта всегда лежит под MD == 20000
 
-        self.gamma_offset = lasio.read(GR_path).df().reset_index().rename(
-            columns={'DEPT': 'MD', 'GR': 'value'})[['MD', 'value']]
+        marker_ind = 0
 
-        self.top_offset_MD = self.gamma_offset.MD.to_numpy()[top_offset_MD_ind][
-            0]  # отсечка кровли пласта на опорном каротаже
-        self.bot_offset_MD = self.gamma_offset.MD.to_numpy()[bot_offset_MD_ind][
-            0]  # отсечка подошвы пласта на опорном каротаже
-        self.th = self.bot_offset_MD - self.top_offset_MD  # обсчитываем мощность пласта
+        start_offset_point_ind = gamma_offset.iloc[(gamma_offset['MD'] - self.Cor.Markers[marker_ind].OffsetPosition).abs().argsort()]['MD'].values[0]
+        start_offset_point_ind = np.where(gamma_offset.MD.to_numpy() == start_offset_point_ind)[0]
+
+        self.gamma_offset = lasio.read(GR_path).df().reset_index().rename(columns={'DEPT': 'MD', 'GR': 'value'})[
+            ['MD', 'value']]
+
+        self.top_offset_MD = self.gamma_offset.MD.to_numpy()[top_offset_MD_ind][0]  # отсечка кровли пласта на опорном каротаже
+        self.bot_offset_MD = self.gamma_offset.MD.to_numpy()[bot_offset_MD_ind][0]  # отсечка подошвы пласта на опорном каротаже
+  
+        self.start_offset_point = self.gamma_offset.MD.to_numpy()[start_offset_point_ind][0] # проекция точки старта на опорный каротаж
 
         self.gamma_offset = self.gamma_offset[
             (np.abs(stats.zscore(self.gamma_offset)) < 3).all(axis=1)]  # удаляем выбросы
         self.gamma_offset.value = get_alpha(self.gamma_offset.value.to_numpy())
 
         # находим точку инициализации алгоритма путем нахождения точки пересечения траектории скважины с заданной кровлей пласта
-        tr_x = trajectory.X.to_numpy()
-        tr_y = trajectory.Y.to_numpy()
-        markers_top_x = markers_top.X.to_numpy()
-        markers_top_y = markers_top.Y.to_numpy()
-        first_line = LineString(np.column_stack((tr_x, tr_y)))
-        second_line = LineString(np.column_stack((markers_top_x, markers_top_y)))
-        self.intersection = first_line.intersection(second_line)
-        # если пересечений траектории скважины с кровлей пласта несколько, берем только первое
-        if isinstance(self.intersection, geometry.multipoint.MultiPoint):
-            self.intersection = self.intersection[0]
+        self.intersection = Intersection(self.Cor.Markers[marker_ind].Location.X, self.Cor.Markers[marker_ind].Location.Y)
+        self.scale = (get_val(self.intersection.x, self.markers_top, 'Y', 'X') - self.intersection.y) / (self.top_offset_MD - self.start_offset_point)
+        self.th = (self.bot_offset_MD - self.top_offset_MD)  # обсчитываем мощность пласта
+        self.th = self.th * self.scale 
 
         # задаём параметры по умолчанию
         self.init_algorithm_params(7, 35, 0.5, 'dtw')
@@ -114,8 +100,7 @@ class GeosteeringModel:
         self.md_start = get_val(self.intersection.x, self.trajectory, 'MD', target_column='X')
         md = self.trajectory.query("MD >= @self.md_start").MD.to_numpy()
 
-        self.step = (
-                                md.max() - md.min()) / num_of_segments  # длина отрезка на котором предположительно пласт распространяется линейно
+        self.step = (md.max() - md.min()) / num_of_segments  # длина отрезка на котором предположительно пласт распространяется линейно
 
         self.delta_deg = delta_deg  # максимальный угол между начальной и конечной точкой отрезка
         # (условно, при горизонтальном расположении траектории скважины)
@@ -146,15 +131,6 @@ class GeosteeringModel:
         # рассчитываем количество отрезков по которым будем матчить кривые
         self.num_of_iterations = num_of_segments  # self.calculate_num_of_iterations()
 
-    # def calculate_num_of_iterations(self):
-    #     top_offset_MD = self.top_offset_MD
-    #     md = self.gamma_real.query("MD >= @top_offset_MD").MD.to_numpy()
-    #     num = (md.max() - md.min()) / self.step
-    #     # если последний отрезок меньше заданного значения (пока задал как 30 метров), то его не матчим
-    #     if (md.max() - md.min()) % self.step >= 30:
-    #         return int(num) + 1
-    #     else:
-    #         return int(num)
 
     def sint_curve_generator(self, start_offset_point, gamma_real_cut, delta):
         real_tr = [get_val(jtem, self.trajectory, 'Y') for jtem in gamma_real_cut.MD]
@@ -172,7 +148,7 @@ class GeosteeringModel:
                     gamma_val = get_val(jtem, self.gamma_offset, 'value')
                 except IndexError:
                     gamma_val = \
-                        self.gamma_offset.iloc[(self.gamma_offset['MD'] - jtem).abs().argsort()]['value'].values[0]
+                    self.gamma_offset.iloc[(self.gamma_offset['MD'] - jtem).abs().argsort()]['value'].values[0]
                 sintetic_curves[i][j] = gamma_val
 
         return sintetic_curves, end_points, real_tr[-1]
@@ -214,17 +190,16 @@ class GeosteeringModel:
 
         top_traj_x = [get_val(self.intersection.x, self.trajectory, 'X', target_column='X')]
 
-        # start_point = trajectory.iloc[(trajectory['X'] - intersection.x).abs().argsort()]
-        # md_start = start_point.MD.values[0]
-        # top_traj_y = [start_point.Y.values[0]]
-        # top_traj_x = [start_point.X.values[0]]
 
         offset_md_points_list = []
         trajectory_md_points_list = []
         self.sintetic_curve = []
         increment = 0
 
-        for iter in range(self.num_of_iterations):
+        import pyprind
+        bar = pyprind.ProgPercent(self.num_of_iterations)
+        for it in range(self.num_of_iterations):
+            bar.update()
             offset_md_points, trajectory_md_points, s_c, tr_x, tr_y = self.geosteering_iteration(md_start=md_start,
                                                                                                  start_offset_point=start_offset_point,
                                                                                                  plot_matching=plot_matching)
@@ -232,7 +207,7 @@ class GeosteeringModel:
             self.sintetic_curve += list(s_c)
             offset_md_points_list.append(offset_md_points)
             trajectory_md_points_list.append(trajectory_md_points)
-            increment += offset_md_points[1] - offset_md_points[0]
+            increment += (offset_md_points[1] - offset_md_points[0]) * self.scale
 
             top_traj_y.append(tr_y - increment)
             top_traj_x.append(tr_x)
@@ -255,51 +230,8 @@ class GeosteeringModel:
         self.top_y, self.top_x = res['y_outer'], res['x_outer']
         self.bot_y, self.bot_x = res['y_inner'], res['x_inner']
 
-    # def surfaces_visualization(self, d_f=5, n=30000):
-    #     g_offset = self.gamma_offset.copy()
-    #     scaler = MinMaxScaler(feature_range=(0, 50))
-    #     g_offset_value = g_offset.value.to_numpy()
-    #     g_offset.value = scaler.fit_transform(g_offset_value.reshape(g_offset_value.shape[0], 1))
-    #     g_offset = g_offset.query("MD >= @self.top_offset_MD-@d_f  & MD <= @self.bot_offset_MD+@d_f ")
-    #
-    #     fig = px.line(x=self.trajectory.X[n:], y=self.trajectory.Y[n:])
-    #
-    #     fig.add_scatter(x=self.markers_top.X, y=self.markers_top.Y, marker=dict(color='green'))
-    #     fig.add_scatter(x=self.markers_bot.X, y=self.markers_bot.Y, marker=dict(color='green'))
-    #
-    #     fig.add_scatter(x=self.top_x,
-    #                     y=self.top_y,
-    #                     marker=dict(color='red'))
-    #
-    #     fig.add_scatter(x=self.bot_x,
-    #                     y=self.bot_y,
-    #                     marker=dict(color='red'))
-    #
-    #     fig.add_scatter(x=self.center_traj_x_without_smoothing,
-    #                     y=self.center_traj_y_without_smoothing,
-    #                     marker=dict(color='black'))
-    #
-    #     for point, d in zip(self.center_traj_x_without_smoothing, self.center_traj_y_without_smoothing):
-    #         x_val = point + g_offset.value.to_numpy() - g_offset.value.mean()
-    #         y_val = []
-    #         a = d
-    #         for diff in g_offset.MD.diff().fillna(0).to_numpy():
-    #             a += diff
-    #             y_val.append(a - d_f)
-    #
-    #         fig.add_scatter(x=x_val,
-    #                         y=y_val,
-    #                         marker=dict(color='orange'))
-    #
-    #     fig.update_yaxes(autorange="reversed")
-    #     fig.show()
 
-    # def curve_matching_visualization(self):
-    #     plt.figure(figsize=(25, 7))
-    #     plot_curves(self.sintetic_curve,
-    #                 self.gamma_real[self.gamma_real.MD >= self.md_start].value.to_numpy()[:len(self.sintetic_curve)])
-
-    def save_results_to_xml(self, path='output.xml'):
+    def save_results_to_xml(self):
         new_top_markers = []
         new_bot_markers = []
 
@@ -329,4 +261,10 @@ class GeosteeringModel:
         self.Cor.Section.Surfaces[0].Points = new_top_markers
         self.Cor.Section.Surfaces[1].Points = new_bot_markers
 
-        self.Cor.save_xml(path)
+        self.Cor.save_xml('files/result.xml')
+
+
+
+class Intersection():
+    def __init__(self, x:float, y:float):
+        self.x, self.y = x, y
