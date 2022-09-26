@@ -20,10 +20,18 @@ def arg_parser() -> (argparse.Namespace, [str]):
     )
 
     parser.add_argument(
+        '--min_interp_seg_size',
+        type=float,
+        default=0,
+        help='Минимальное расстояние при котором интерполируется значение имиджа '
+             '(Если расстояние больше указаного запускается алгоритм матчинга) (default: 0)'
+    )
+
+    parser.add_argument(
         '--segments_count',
         type=int,
-        default=100,
-        help='Количество отрезков на которую разделится траектория скважины (default: 5)'
+        default=4,
+        help='Количество отрезков на которую разделится траектория скважины (default: 4)'
     )
 
     parser.add_argument(
@@ -71,6 +79,9 @@ def arg_parser() -> (argparse.Namespace, [str]):
 
     if current_namespace.st <= 0:
         error_messages.append('st should be more than 0')
+
+    if current_namespace.min_interp_seg_size < 0:
+        error_messages.append('min_interp_seg_size should be more than 0')
 
     if current_namespace.metric not in metrics:
         error_messages.append(f'metric {metrics} must be one of: {", ".join(metrics)}')

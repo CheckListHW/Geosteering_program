@@ -4,22 +4,26 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import dtaidistance
-from shapely import geometry
-from shapely.geometry import LineString
 from scipy import stats
 import lasio
-from scipy.interpolate import interp1d
+from scipy.interpolate import interp1d, splrep, splev
 
 
-class GeosteeringModel:
-    def __init__(self, scenario: Scenario, GR_path):
+class Intersection():
+    def __init__(self, x: float, y: float):
+        self.x, self.y = x, y
+
+
+class Geostering_Model():
+    def __init__(self, xml_path, GR_path):
         """Считываем все данные которые потребуются для геонавигации
         Args:
             xml_path (str): путь к xml файлу с данными GO
             GR_path (str): путь к las файлу с опорным каротажем
         """
         # считываем xml файл со сценарием
-        self.Cor = scenario
+        self.Cor = Scenario()
+        self.Cor.load(xml_path)
 
         # далее создаем датафреймы со всеми данными
         X, Y, MD = [], [], []
@@ -42,7 +46,7 @@ class GeosteeringModel:
         gamma_real['value'] = val
         gamma_real = gamma_real[(np.abs(stats.zscore(gamma_real)) < 3).all(axis=1)]  # удаляем выбросы
         self.gamma_real = gamma_real.dropna()  # данные реального каротажа снятого со скважины при бурении
-        clean_signal = filter_signal(self.gamma_real.value.to_numpy(), threshold=1e5)  # сглаживание/очистка от шумов
+        clean_signal = filter_signal(self.gamma_real.value.to_numpy(), threshold=1e4)  # сглаживание/очистка от шумов
         self.gamma_real = self.gamma_real.iloc[:len(clean_signal)]
         self.gamma_real['value'] = get_alpha(clean_signal)
 
@@ -73,11 +77,19 @@ class GeosteeringModel:
         gamma_offset['MD'] = MD
         gamma_offset['value'] = val
         gamma_offset = gamma_offset.dropna()
+        # self.a = gamma_offset.copy()
 
         top_offset_MD_ind = np.where(gamma_offset.MD.to_numpy() == 10000)[
             0]  # кровля пласта всегда лежит под MD == 10000
         bot_offset_MD_ind = np.where(gamma_offset.MD.to_numpy() == 20000)[
             0]  # подошва пласта всегда лежит под MD == 20000
+
+        marker_ind = 0
+
+        start_offset_point_ind = \
+        gamma_offset.iloc[(gamma_offset['MD'] - self.Cor.Markers[marker_ind].OffsetPosition).abs().argsort()][
+            'MD'].values[0]
+        start_offset_point_ind = np.where(gamma_offset.MD.to_numpy() == start_offset_point_ind)[0]
 
         self.gamma_offset = lasio.read(GR_path).df().reset_index().rename(
             columns={'DEPT': 'MD', 'GR': 'value'})[['MD', 'value']]
@@ -86,38 +98,48 @@ class GeosteeringModel:
             0]  # отсечка кровли пласта на опорном каротаже
         self.bot_offset_MD = self.gamma_offset.MD.to_numpy()[bot_offset_MD_ind][
             0]  # отсечка подошвы пласта на опорном каротаже
-        self.th = (self.bot_offset_MD - self.top_offset_MD) / 2  # обсчитываем мощность пласта
+
+        self.start_offset_point = self.gamma_offset.MD.to_numpy()[start_offset_point_ind][
+            0]  # проекция точки старта на опорный каротаж
 
         self.gamma_offset = self.gamma_offset[
             (np.abs(stats.zscore(self.gamma_offset)) < 3).all(axis=1)]  # удаляем выбросы
         self.gamma_offset.value = get_alpha(self.gamma_offset.value.to_numpy())
 
         # находим точку инициализации алгоритма путем нахождения точки пересечения траектории скважины с заданной кровлей пласта
-        tr_x = trajectory.X.to_numpy()
-        tr_y = trajectory.Y.to_numpy()
-        markers_top_x = markers_top.X.to_numpy()
-        markers_top_y = markers_top.Y.to_numpy()
-        first_line = LineString(np.column_stack((tr_x, tr_y)))
-        second_line = LineString(np.column_stack((markers_top_x, markers_top_y)))
-        self.intersection = first_line.intersection(second_line)
-        # если пересечений траектории скважины с кровлей пласта несколько, берем только первое
-        if isinstance(self.intersection, geometry.multipoint.MultiPoint):
-            self.intersection = self.intersection[0]
+        self.intersection = Intersection(self.Cor.Markers[marker_ind].Location.X,
+                                         self.Cor.Markers[marker_ind].Location.Y)
 
+        # if (self.top_offset_MD - self.start_offset_point) != 0:
+        self.scale = (self.markers_bot.Y - self.markers_top.Y).mean() / (self.bot_offset_MD - self.top_offset_MD)
+        # else:
+        #   self.scale = 1
+        self.th = (self.bot_offset_MD - self.top_offset_MD)  # обсчитываем мощность пласта
+        self.th = self.th * self.scale
+
+        # если пересечений траектории скважины с кровлей пласта несколько, берем только первое
         self.geosteering_part_tr = self.trajectory.query(
             "X >= @self.intersection.x")  # часть траектории где будет работать алгоритм
 
-        # считываем интерпретированные геологом данные имиджа
-        dips = [[d.Md, d.Dip, d.Location.X, d.Location.Y] for d in self.Cor.Dips]
-        self.dips = pd.DataFrame(dips)
-        self.dips.columns = ['MD', 'Dip', 'X', 'Y']
-        self.dips = self.dips.sort_values(by='MD', ascending=True).query("X >= @self.intersection.x")
-
         self.md_start = get_val(self.intersection.x, self.trajectory, 'MD', target_column='X')
         md_end = self.geosteering_part_tr.MD.to_list()[-1]
-        # задаём параметры по умолчанию
-        self.init_algoritm_params(self.md_start, md_end, 7, 35, 0.5, 'dtw')
-        self.init_dips_algoritm_params(150)
+        self.geosteering_part_len = md_end - self.md_start
+
+        if self.Cor.Dips:
+            # считываем интерпретированные геологом данные имиджа
+            dips = [[d.Md, d.Dip, d.Location.X, d.Location.Y] for d in self.Cor.Dips]
+            self.dips = pd.DataFrame(dips)
+            self.dips.columns = ['MD', 'Dip', 'X', 'Y']
+            self.dips = self.dips.sort_values(by='MD', ascending=True).query("X >= @self.intersection.x")
+            # задаём параметры по умолчанию
+            self.init_algoritm_params(self.md_start, md_end, 7, 35, 0.5, 'dtw')
+            self.init_dips_algoritm_params(150)
+
+        else:
+            self.init_algoritm_params(self.md_start, md_end, 7, 35, 0.5, 'dtw')
+            self.use_geosteering_alg = [True]
+            self.control_points = [get_val(self.md_start, self.trajectory, 'X', 'MD'),
+                                   get_val(md_end, self.trajectory, 'X', 'MD')]
 
     def init_increments_using_dips(self):
         deriv_vals = np.tan(self.dips.Dip)
@@ -174,7 +196,8 @@ class GeosteeringModel:
 
         md = self.trajectory.query("MD >= @md_start & MD <= @md_end").MD.to_numpy()
 
-        self.step = (md.max() - md.min()) / num_of_segments  # длина отрезка на котором предположительно пласт распространяется линейно
+        self.step = (
+                                md.max() - md.min()) / num_of_segments  # длина отрезка на котором предположительно пласт распространяется линейно
 
         self.delta_deg = delta_deg  # максимальный угол между начальной и конечной точкой отрезка
         # (условно, при горизонтальном расположении траектории скважины)
@@ -220,12 +243,13 @@ class GeosteeringModel:
 
         """
         real_tr = [get_val(jtem, self.trajectory, 'Y') for jtem in gamma_real_cut.MD]
-        curvature = real_tr - np.linspace(real_tr[0], real_tr[-1],
-                                          len(real_tr))  # рассчитываем кривизну скважины на заданном участке
-
+        curvature = (real_tr - np.linspace(real_tr[0], real_tr[-1],
+                                           len(real_tr))) / self.scale  # рассчитываем кривизну скважины на заданном участке
         end_points = np.arange(start_offset_point + d - delta, start_offset_point + d + delta + self.st, self.st)
-        sintetic_curves = [np.linspace(start_offset_point, end_point, len(gamma_real_cut.MD)) + curvature for end_point
-                           in end_points]  # рассчитываем проекции получившейся траектории на опорный каротаж
+        sintetic_curves = [np.linspace(start_offset_point,
+                                       end_point,
+                                       len(gamma_real_cut.MD)) + curvature for end_point in
+                           end_points]  # рассчитываем проекции получившейся траектории на опорный каротаж
 
         # снимаем значения с опорного каротажа и формируем итоговые кривые
         for i, item in enumerate(sintetic_curves):
@@ -233,7 +257,8 @@ class GeosteeringModel:
                 try:
                     gamma_val = get_val(jtem, self.gamma_offset, 'value')
                 except IndexError:
-                    gamma_val = self.gamma_offset.iloc[(self.gamma_offset['MD'] - jtem).abs().argsort()]['value'].values[0]
+                    gamma_val = \
+                    self.gamma_offset.iloc[(self.gamma_offset['MD'] - jtem).abs().argsort()]['value'].values[0]
                 sintetic_curves[i][j] = gamma_val
 
         return sintetic_curves, end_points, real_tr[-1]
@@ -277,6 +302,8 @@ class GeosteeringModel:
 
         # находим наилучший результат по заданной метрике и если нужно визуализируем её
         best_sintetic_curve_ind = self.get_best_sintetic_curve_ind(dist_list)
+        # if plot_matching:
+        #     plot_curves(sintetic_curves[best_sintetic_curve_ind], gamma_real_cut.value)
 
         offset_md_points = start_offset_point, end_points[best_sintetic_curve_ind]
         trajectory_md_points = md_start, md_next
@@ -289,8 +316,8 @@ class GeosteeringModel:
         Args:
             plot_matching (bool, optional): Визуализация кривых которые были выбраны по заданной метрике как наиболее похожие. Defaults to False.
         """
-        top_traj_y = []
 
+        top_traj_y = []
         top_traj_x = []
 
         self.sintetic_curve = []
@@ -298,10 +325,10 @@ class GeosteeringModel:
         for it in range(self.num_of_iterations):
             if it == 0:
                 ang = self.ang1
-                delt = 0.5
+                delt = 5
             elif it == self.num_of_iterations - 1:
                 ang = self.ang2
-                delt = 0.5
+                delt = 5
             else:
                 ang = None
 
@@ -313,7 +340,7 @@ class GeosteeringModel:
 
             self.sintetic_curve += list(s_c)
 
-            increment += offset_md_points[1] - offset_md_points[0]
+            increment += (offset_md_points[1] - offset_md_points[0]) * self.scale
 
             top_traj_y.append(tr_y - increment)
             top_traj_x.append(tr_x)
@@ -323,35 +350,41 @@ class GeosteeringModel:
 
         return top_traj_x, top_traj_y
 
-    def start_complex_geosteering(self, min_interp_seg_size, delta_deg, st, metric, plot_matching):
+    def start_complex_geosteering(self, min_interp_seg_size, delta_deg, st, metric, plot_matching, without_dips_nof=7):
+        if self.Cor.Dips:
+            self.init_dips_algoritm_params(min_interp_seg_size)
+            dips = [None] + self.dips.Dip.to_list() + [None]
+        else:
+            dips = [None, None]
 
-        self.init_dips_algoritm_params(min_interp_seg_size)
-
-        dips = [None] + self.dips.Dip.to_list() + [None]
-
-        top_traj_y, top_traj_x = [], []
-        start_point = (self.geosteering_part_tr.X.to_numpy()[0], self.geosteering_part_tr.Y.to_numpy()[0])
+        start_point = (
+        self.intersection.x, self.intersection.y + (self.top_offset_MD - self.start_offset_point) * self.scale)
+        top_traj_y, top_traj_x = [start_point[1]], [start_point[0]]
 
         for i, item in enumerate(self.use_geosteering_alg):
             if item:
                 ang1, ang2 = dips[i], dips[i + 1]
 
                 s_p, e_p = self.control_points[i], self.control_points[i + 1]
-
                 start_offset_point, incr = self.get_proj(start_point[0], start_point[1])
-                md_start = get_val(s_p, self.geosteering_part_tr, 'MD', 'X')
-                md_end = get_val(e_p, self.geosteering_part_tr, 'MD', 'X')
+                # print(start_offset_point, self.start_offset_point)
 
-                # num_of_segments = int((e_p - s_p) / (self.min_allow_size*0.6)) # максимально из ниоткуда взявшаяся формула!!!
+                md_start = get_val(s_p, self.trajectory, 'MD', 'X')
+                md_end = get_val(e_p, self.trajectory, 'MD', 'X')
 
-                if (e_p - s_p) < 120:
-                    num_of_segments = 3
+                if int((e_p - s_p)) == int(self.geosteering_part_len):
+                    num_of_segments = without_dips_nof
+                elif (e_p - s_p) >= 150:
+                    num_of_segments = 2
+                elif 90 > (e_p - s_p) > 150:
+                    num_of_segments = 1
+                # elif (e_p - s_p) > 80:
+                #     num_of_segments = 2
                 else:
-                    num_of_segments = 4
+                    num_of_segments = 1
 
                 self.init_algoritm_params(md_start, md_end, num_of_segments, delta_deg, st, metric, ang1, ang2,
                                           incr=incr)  # настраиваем гиперпараметры алгоритма
-
                 x, y = self.start_geosteering(start_offset_point, md_start, plot_matching=plot_matching)
 
                 top_traj_y += list(y)
@@ -375,21 +408,22 @@ class GeosteeringModel:
                 start_point = (top_traj_x[-1], top_traj_y[-1])
 
         self.center_traj_x_without_smoothing = np.array(top_traj_x)
-        self.center_traj_y_without_smoothing = np.array(top_traj_y + self.th * 0.5)
+        self.center_traj_y_without_smoothing = np.array(top_traj_y + self.th / 2)
 
         top_traj_x = np.array(top_traj_x)
-        top_traj_y = np.array(top_traj_y + self.th * 0.5)
+        top_traj_y = np.array(top_traj_y + self.th / 2)
 
-        cubic_interpolation_model = interp1d(top_traj_x, top_traj_y, kind="cubic")
+        interpolation_model = interp1d(top_traj_x, top_traj_y, kind="quadratic")
 
         top_traj_x = np.linspace(top_traj_x.min(), top_traj_x.max(), len(top_traj_x) * 5)
-        top_traj_y = cubic_interpolation_model(top_traj_x)
+        top_traj_y = interpolation_model(top_traj_x)
+        top_traj_x, top_traj_y = self.present_interp_top(top_traj_x, top_traj_y)
 
         res = parallel_curves(top_traj_x, top_traj_y, d=self.th * 0.5, flag1=False)
         self.top_y, self.top_x = res['y_outer'], res['x_outer']
         self.bot_y, self.bot_x = res['y_inner'], res['x_inner']
 
-    def save_results_to_xml(self, path='output.xml', l=150):
+    def save_results_to_xml(self, l=150):
         """
         Сохранение результатов в xml
         """
@@ -422,7 +456,7 @@ class GeosteeringModel:
         self.Cor.Section.Surfaces[0].Points = new_top_markers
         self.Cor.Section.Surfaces[1].Points = new_bot_markers
 
-        self.Cor.save_xml(path)
+        self.Cor.save_xml('output/result.xml')
 
     def get_proj(self, x, y):
         """
@@ -436,24 +470,36 @@ class GeosteeringModel:
         Returns:
             float: значение проекции (глубина на опорном каротаже)
         """
-        well_y = get_val(x, self.geosteering_part_tr, 'Y', 'X')
+        well_y = get_val(x, self.trajectory, 'Y', 'X')
+        # print(well_y, y)
         delta = well_y - y
-        return self.top_offset_MD + delta, delta
+        # print(delta)
+        return self.top_offset_MD + delta / self.scale, delta
 
+    def present_interp_top(self, top_x, top_y, d=100):
+        top_x_y = pd.DataFrame(columns=['X', 'Y'])
+        top_x_sorting = top_x.copy()
+        top_x_sorting.sort()
+        top_x_y['X'] = top_x_sorting
+        top_x_y['Y'] = top_y
+        markers_top = self.markers_top[['X', 'Y']][self.markers_top['X'] > max(top_x_y['X']) + d] + self.th * 0.5
+        top_x_y = top_x_y.append(markers_top)
 
-if __name__ == "__main__":
-    xml_path = 'files/input.xml'
-    GR_path = 'files/input.xml'
+        tck = splrep(top_x_y['X'], top_x_y['Y'])
+        top_x = np.arange(top_x_y['X'].min(), top_x_y['X'].max())
+        top_y = splev(top_x, tck)
+        return top_x, top_y
 
-    Cor = Scenario()
-    Cor.load(xml_path)
-
-    model = GeosteeringModel(scenario=Cor, GR_path=GR_path)
-
-    model.start_complex_geosteering(min_interp_seg_size=100,
-                                    delta_deg=10,
-                                    st=0.5,
-                                    metric='r2',
-                                    plot_matching=False)
-
-    model.save_results_to_xml()
+    # def present_interp_bot(self, offset=100):
+    #     bot_x_y = pd.DataFrame(columns=['X', 'Y'])
+    #     bott_x_sorting = self.bot_x.copy()
+    #     bott_x_sorting.sort()
+    #     bot_x_y['X'] = bott_x_sorting
+    #     # bot_x_y['X'] = self.bot_x
+    #     bot_x_y['Y'] = self.bot_y
+    #     markers_bot = self.markers_bot[['X', 'Y']][self.markers_bot['X']>max(bot_x_y['X'])+offset]
+    #     bot_x_y = bot_x_y.append(markers_bot)
+    #     tck = splrep(bot_x_y['X'], bot_x_y['Y'])
+    #     self.bot_x = np.arange(bot_x_y['X'].min(),
+    #                            bot_x_y['X'].max())
+    #     self.bot_y = splev(self.bot_x, tck)
