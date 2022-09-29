@@ -1,11 +1,9 @@
 import os
+
 from utils.synthetic_generator.generator import SyntheticGenerator
 
 from Geosteering_model import *
 from pyswarms.single.global_best import GlobalBestPSO
-
-
-
 
 
 def interp(x, y, l):
@@ -17,25 +15,24 @@ def interp(x, y, l):
 
 def get_surf(points_real):
     points = points_real.copy()
-    c = model.start_y 
+    c = model.start_y
     for i in range(len(points)):
         c += points[i]
         points[i] = c
     return points
 
+
 def generate_sint_curve(points):
     x, y = [], []
     points = get_surf(points)
 
+    top_traj_x, points = interp(x_coords, points, len(points) * 5)
 
-    top_traj_x, points = interp(x_coords, points, len(points)*5)
-    
-    
     top_y = list(points)
     bot_y = list(points + model.th)
     curve = generator.generate(top_traj_x, top_y, top_traj_x, bot_y).Points
 
-    for point in curve: 
+    for point in curve:
         x.append(point.Position)
         y.append(point.Value)
 
@@ -43,19 +40,17 @@ def generate_sint_curve(points):
     df['MD'], df['Y'] = x, y
     df = df.query("MD >= @model.md_start")
 
-
-
     return interp(df.MD.to_numpy(), df.Y.to_numpy(), len(real_curve))
 
 
 def fitness_function(X, x_coords, real_curve, model, generator):
-    global best_cost, best_id 
+    global best_cost, best_id
 
     dist_arr = []
     for points in X:
         x, y = generate_sint_curve(points)
         d = dtaidistance.dtw.distance_fast(get_alpha(real_curve), get_alpha(y), window=50)
-        dist_arr+=[d]
+        dist_arr += [d]
 
     dist_arr = np.array(dist_arr)
     if (d_min := dist_arr.min()) < best_cost:
@@ -65,60 +60,67 @@ def fitness_function(X, x_coords, real_curve, model, generator):
     return dist_arr
 
 
-
 if __name__ == '__main__':
-    
-    xml_path = 'input/well2withoutdips/well2withoutdips.xml'
-    GR_path = 'input/well2withoutdips/GRwell2withoutdips.las'
+    try:
+        print(os.getcwd())
+        from geosteering_tools.arg_parser import arg_parser
+        params = arg_parser()
 
-    dim, increment_val = 10, 5
-    n_particles = 100
-    num_iter = 50
+        xml_path = params.scenario_path
+        GR_path = params.offset_path
+        result_path = params.result_path
 
+        dim, increment_val = 10, 5
+        n_particles = 100
+        num_iter = 50
 
-    best_cost, best_id = np.inf, None
+        best_cost, best_id = np.inf, None
 
-    model = Geostering_Model(xml_path=xml_path,
-                             GR_path=GR_path)
+        model = Geostering_Model(xml_path=xml_path, GR_path=GR_path)
 
-    model.start_y = get_val(model.intersection.x, model.markers_top, 'Y', 'X')
-    real_curve = model.gamma_real.query("MD >= @model.md_start").value.to_numpy()
+        model.start_y = model.intersection.y + (model.top_offset_MD - model.start_offset_point) * model.scale
+        real_curve = model.gamma_real.query("MD >= @model.md_start").value.to_numpy()
 
+        generator = SyntheticGenerator(xml_path, model.gamma_offset.MD.to_list(), model.gamma_offset.value.to_list())
 
+        x_coords = np.linspace(model.geosteering_part_tr.X.to_numpy()[0], model.geosteering_part_tr.X.to_numpy()[-1], dim)
 
-    scenario_path = os.getcwd() +'/'+ xml_path
-    generator = SyntheticGenerator(scenario_path, model.gamma_offset.MD.to_list(), model.gamma_offset.value.to_list())
+        md_vals = [get_val(x, model.trajectory, 'MD', 'X') for x in x_coords]
 
+        seism_y = np.array([get_val(x, model.markers_top, 'Y', 'X') for x in x_coords])
+        seism_y_derivs = np.insert(np.diff(seism_y), 0, 0)
 
-    x_coords = np.linspace(model.geosteering_part_tr.X.to_numpy()[0], model.geosteering_part_tr.X.to_numpy()[-1], dim)
+        # instatiate the optimizer
+        x_max = increment_val * np.ones(dim)
+        x_min = -increment_val * np.ones(dim)
+        x_max[0], x_min[0] = 0.1, -0.1
 
-    md_vals = [get_val(x, model.trajectory, 'MD', 'X') for x in x_coords]
+        bounds = (x_min, x_max)
+        options = {'c1': 1, 'c2': 1.3, 'w': 0.3}
 
-    seism_y = np.array([get_val(x, model.markers_top, 'Y', 'X') for x in x_coords])
-    seism_y_derivs = np.insert(np.diff(seism_y), 0, 0)
+        optimizer = GlobalBestPSO(n_particles=n_particles, dimensions=dim, options=options, bounds=bounds,
+                                velocity_clamp=(-1.5, 1.5))
 
-    
-    # instatiate the optimizer
-    x_max = increment_val * np.ones(dim)
-    x_min = -increment_val * np.ones(dim)
-    x_max[0], x_min[0] = 0.1, -0.1
+        for p, incr in zip(range(optimizer.swarm.position.shape[0]), np.linspace(-increment_val, increment_val, dim)):
+            palka = np.ones(dim - 1) * incr
+            palka = np.insert(palka, 0, 0)
+            optimizer.swarm.position[p] = palka
+        # optimizer.swarm.position[0] = seism_y_derivs
 
-    bounds = (x_min, x_max)
-    options = {'c1': 1, 'c2': 1.3, 'w': 0.3}
+        cost, pos = optimizer.optimize(fitness_function, num_iter, x_coords=x_coords, real_curve=real_curve, model=model,
+                                    generator=generator)
 
+        points = get_surf(pos)
+        x_c, points = interp(x_coords, points, len(points) * 5)
 
-    optimizer = GlobalBestPSO(n_particles=n_particles, dimensions=dim, options=options, bounds=bounds, velocity_clamp=(-1.5, 1.5))
+        top_y = list(points)
+        bot_y = list(points + model.th)
 
-    cost, pos = optimizer.optimize(fitness_function, num_iter, x_coords=x_coords, real_curve=real_curve, model=model, generator=generator)
-    
-    points = get_surf(pos)
-    x_c, points = interp(x_coords, points, len(points)*5)
+        model.top_y, model.top_x = top_y, x_c
+        model.bot_y, model.bot_x = bot_y, x_c
+        model.save_results_to_xml(l=1, result_path=result_path)
 
-    top_y = list(points)
-    bot_y = list(points + model.th)
-
-    model.top_y, model.top_x = top_y, x_c
-    model.bot_y, model.bot_x = bot_y, x_c
-    model.save_results_to_xml(l=1)
-    
-    print('Done!')
+        print('Done!')
+    except Exception as e:
+        print('error')
+        print(e)

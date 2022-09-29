@@ -2,9 +2,12 @@ import os
 
 import clr
 
-apiDll = os.getcwd() + '/dlls/Api.dll'
-clr.AddReference(apiDll)
+dll_dir = os.getcwd() + '/dlls'
+if not os.path.isdir(dll_dir):
+    dll_dir = os.getcwd() + '/project/dlls'
 
-# auto_correlation_Dll = 'C:/Users/kosac/Desktop/TestAutoCorrelation/TestAutoCorrelation/AutoCorrelation/bin/Debug/AutoCorrelation.dll'
-auto_correlation_Dll = os.getcwd() + '/dlls/AutoCorrelation.dll'
+apiDll = dll_dir + '/Api.dll'
+auto_correlation_Dll = dll_dir + '/AutoCorrelation.dll'
+
+clr.AddReference(apiDll)
 clr.AddReference(auto_correlation_Dll)
