@@ -515,7 +515,7 @@ class Geostering_Model():
     #     self.Cor.save_xml('output/result.xml')
 
 
-    def save_results_to_xml(self, l=150):
+    def save_results_to_xml(self, l=150, result_path='output/result.xml'):
         """
         Сохранение результатов в xml
         """        
@@ -548,7 +548,7 @@ class Geostering_Model():
         self.Cor.Section.Surfaces[0].Points = new_top_markers
         self.Cor.Section.Surfaces[1].Points = new_bot_markers
 
-        self.Cor.save_xml('output/result.xml')
+        self.Cor.save_xml(result_path)
 
 
 
