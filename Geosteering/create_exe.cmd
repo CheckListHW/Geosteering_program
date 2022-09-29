@@ -11,3 +11,7 @@ call move dist\main main
 
 if exist dist rmdir /s /q dist
 if exist build rmdir /s /q build
+if exist main.spec del main.spec
+
+if exist project\venv  rd /s project\venv /Q
+if exist project\python rd /s project\python /Q

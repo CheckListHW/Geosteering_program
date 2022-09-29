@@ -1,3 +1,7 @@
+if not exist main (
+	call create_exe.cmd
+)
+
 set SETUPTOOLS_USE_DISTUTILS=stdlib
 
 set dirData =%cd%\Data\
